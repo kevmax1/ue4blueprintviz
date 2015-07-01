@@ -72,6 +72,12 @@ var ue4viz;
         LineParser.prototype.isClassEndTag = function () {
             return this.line.indexOf('End Object') != -1;
         };
+        LineParser.prototype.isObjectStartBlock = function () {
+            return this.isClassStartTag() === false && this.containsKey('Name');
+        };
+        LineParser.prototype.isObjectEndBlock = function () {
+            return this.isClassEndTag();
+        };
         return LineParser;
     })();
     var Parser = (function () {
@@ -79,7 +85,7 @@ var ue4viz;
             this.blueprint = [];
             this.lineParser = new LineParser("");
             this.currentLine = 0;
-            this.currentIdentation = 0;
+            this.currentBlockIdent = 0;
             this.mode = 0 /* NONE */;
             this.load(blueprint);
         }

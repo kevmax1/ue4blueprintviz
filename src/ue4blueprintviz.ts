@@ -90,13 +90,21 @@ module ue4viz{
         isClassEndTag(): boolean {
             return this.line.indexOf('End Object') != -1;
         }
+
+        isObjectStartBlock(): boolean {
+            return this.isClassStartTag() === false && this.containsKey('Name');
+        }
+
+        isObjectEndBlock(): boolean {
+            return this.isClassEndTag();
+        }
     }
 
     class Parser{
         private blueprint: string[] = [];
         private lineParser = new LineParser("");
         private currentLine = 0;
-        public currentIdentation =0;
+        public currentBlockIdent = 0;
         public mode: ParseMode = ParseMode.NONE;
 
         constructor(blueprint: string){
