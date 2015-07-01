@@ -104,7 +104,7 @@ module ue4viz{
         private blueprint: string[] = [];
         private lineParser = new LineParser("");
         private currentLine = 0;
-        public currentBlockIdent = 0;
+        public currentBlockLevel = 0;
         public mode: ParseMode = ParseMode.NONE;
 
         constructor(blueprint: string){
@@ -137,6 +137,25 @@ module ue4viz{
                 this.lineParser.set(this.blueprint[this.currentLine]);
             }
         }
+
+        parseBlock(): {} {
+            var blockLevel: number = this.line().getIdentation();
+            var node = {};
+            var name;
+
+            while(!this.line().isClassEndTag() && this.line().getIdentation() !== blockLevel){
+                //name = this.line().getValueFor('Name');
+
+                if(this.line().isClassStartTag() && this.line().getIdentation() === blockLevel+1){
+                    name = this.line().getValueFor('Name');
+                    node[name] = this.parseBlock();
+                }
+
+                this.next();
+            }
+
+            return node;
+        }
     }
 
     export function parseBlueprint(): void{
@@ -144,21 +163,28 @@ module ue4viz{
         blueprint = atob(blueprint);
 
         var parser = new Parser(blueprint);
+        var nodes = [];
+        var node = {};
 
         //iterate through the blueprint
         while(!parser.isEOF()){
-            var line = parser.line().get();
+            //this.currentBlockLevel = parser.line().getIdentation();
+            //var line = parser.line().get();
 
-            if(parser.mode === ParseMode.NONE){
-
+            if(parser.line().getIdentation() === 0 && parser.line().isClassStartTag()) {
+                var name = parser.line().getValueFor('Name');
+                node[name] = parser.parseBlock();
+                nodes.push(node);
             }
 
-            if(parser.line().isClassStartTag()){
+            /*if(parser.line().isClassStartTag()){
                 console.log('Node Definition Found!');
                 console.log(parser.line().get());
-            }
+            }*/
 
             parser.next();
         }
+
+        console.dir(nodes);
     }
 }
