@@ -1,11 +1,4 @@
 module ue4viz{
-    enum ParseMode {
-        NONE,
-        OBJECTSTART,
-        OBJECTEND,
-        VALUE,
-        PIN
-    };
 
     //Utility functions for line parsing
     class LineParser{
@@ -105,7 +98,6 @@ module ue4viz{
         private lineParser = new LineParser("");
         private currentLine = 0;
         public currentBlockLevel = 0;
-        public mode: ParseMode = ParseMode.NONE;
 
         constructor(blueprint: string){
             this.load(blueprint);
@@ -114,7 +106,6 @@ module ue4viz{
         reset(): void{
             this.currentLine = 0;
             this.lineParser.set(this.blueprint[this.currentLine]);
-            this.mode = ParseMode.NONE;
         }
 
         load(blueprint: string): void{
@@ -143,8 +134,8 @@ module ue4viz{
             var node = {};
             var name;
 
+            this.next();
             while(!this.line().isClassEndTag() && this.line().getIdentation() !== blockLevel){
-                //name = this.line().getValueFor('Name');
 
                 if(this.line().isClassStartTag() && this.line().getIdentation() === blockLevel+1){
                     name = this.line().getValueFor('Name');
@@ -168,19 +159,13 @@ module ue4viz{
 
         //iterate through the blueprint
         while(!parser.isEOF()){
-            //this.currentBlockLevel = parser.line().getIdentation();
-            //var line = parser.line().get();
 
             if(parser.line().getIdentation() === 0 && parser.line().isClassStartTag()) {
                 var name = parser.line().getValueFor('Name');
+                node = {};
                 node[name] = parser.parseBlock();
                 nodes.push(node);
             }
-
-            /*if(parser.line().isClassStartTag()){
-                console.log('Node Definition Found!');
-                console.log(parser.line().get());
-            }*/
 
             parser.next();
         }
