@@ -7,16 +7,134 @@
     <style>
         body{
             font-family: 'Roboto', sans-serif;
+            margin: 0;
         }
+
+        #bp, #paste{
+            height: 900px;
+            float: left;
+        }
+
+        #bp{
+            position: relative;
+            width: 60%;
+            background-color: fuchsia;
+            overflow: hidden;
+        }
+        #paste{
+            position: relative;
+            width: 40%;
+            background-color: lightcoral;
+        }
+
+        #paste-field{
+            width: 100%;
+            height: 100%;
+            font-size: 12px;
+            border: 0;
+            resize: none;
+            background-color: lightyellow;
+            box-sizing: border-box;
+        }
+
+        #paste-branding{
+            position: absolute;
+            right: 10px;
+            bottom: 10px;
+        }
+
+        #background, #lines, #nodes{
+            /*width: 100%;
+            height: 100%;*/
+            position: absolute;
+        }
+
+        #nodes{
+            opacity: 0.2;
+        }
+
     </style>
 </head>
 <body>
-<h1>Paste Blueprint:</h1>
+<div id="main">
+    <div id="bp">
+        <canvas id="background"></canvas>
+        <svg id="lines"></svg>
+        <div id="nodes">
+            <img src="http://www.newellstravel.co.uk/static/media/specials/445/Stock%20image%20alps%20%20snow%20freeimage-4900827-high.jpg">
+        </div>
+    </div>
+    <div id="paste">
+        <span id="paste-branding">Paste Blueprint</span>
+        <textarea id="paste-field"></textarea>
+    </div>
+</div>
 <script type="text/javascript" src="ue4blueprintviz.js"></script>
 <script type="text/javascript">
     window.onload = function(e){
         ue4viz.parseBlueprint();
+
+        drawGrid();
+
+        var pastefield = document.getElementById('paste-field');
+
+        pastefield.addEventListener('paste', function(e){
+            var pasted = e.clipboardData.getData('text/plain');
+            console.log(pasted);
+        });
+
+        var bpEl = document.getElementById('bp');
+        var nodeEl = document.getElementById('nodes');
+
+        var mouseDown = false;
+        var scrollX, scrollY;
+
+        bpEl.addEventListener('mousedown', function(e){
+            mouseDown = true;
+            scrollX = e.x;
+            scrollY = e.y;
+
+            e.preventDefault();
+        });
+
+        bpEl.addEventListener('mouseup', function(e){
+           mouseDown = false;
+
+            e.preventDefault();
+        });
+
+        bpEl.addEventListener('mousemove', function(e){
+            if(mouseDown){
+                bpEl.scrollLeft += -(e.x-scrollX);
+                bpEl.scrollTop += -(e.y-scrollY);
+
+                scrollX = e.x;
+                scrollY = e.y;
+            }
+
+            //console.dir(e);
+            e.preventDefault();
+        });
+
+        bpEl.addEventListener('mouseleave', function(e){
+            mouseDown = false;
+        });
     };
+
+    function init(elId){
+        var container = document.getElementById(elId);
+    }
+
+    function drawGrid(){
+        var canvas = document.getElementById('background');
+        var ctx = canvas.getContext('2d');
+
+        ctx.fillStyle = "rgb(200,0,0)";
+        ctx.fillRect (10, 10, 55, 50);
+
+        ctx.fillStyle = "rgba(0, 0, 200, 0.5)";
+        ctx.fillRect (30, 30, 55, 50);
+    }
 </script>
 </body>
 </html>
