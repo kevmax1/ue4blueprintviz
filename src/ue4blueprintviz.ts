@@ -49,13 +49,13 @@ module ue4viz{
             });
 
             //extract key value pairs
-            tokens.forEach(function(token: string): void {
+            tokens.forEach((token: string): void => {
                 var split = token.indexOf('=');
-                var key = token.substr(0,split);
-                var value = token.substr(split+1);
+                var key = token.substr(0,split).trim();
+                var value = token.substr(split+1).trim();
 
                 //todo don't leave values as strings
-                values[key] = value;
+                values[key] = this.parseToken(value);
             });
 
             this.kv = values;
@@ -74,6 +74,14 @@ module ue4viz{
                 this.getKeyValues();
 
             return key in this.kv;
+        }
+
+        parseToken(token: string): string {
+            if(token[0] === '"' && token[token.length - 1] === '"'){
+                token = token.substr(1, token.length - 2);
+            }
+
+            return token;
         }
 
         isClassStartTag(): boolean {
