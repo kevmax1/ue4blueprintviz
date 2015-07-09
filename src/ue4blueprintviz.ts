@@ -38,15 +38,20 @@ module ue4viz{
         }
 
         getKeyValues(): {} {
-            var tokens: string[] = this.line.split(' ');
+            var tokens: string[] = this.line.trim().split(' ');
             var values = {};
 
-            //filter key value pairs
-            tokens.filter(function(token: string): boolean{
-                if(token.indexOf('=') !== -1)
-                    return true;
-                return false;
-            });
+            if(this.isCommentToken(this.line)){
+                tokens = [this.line.trim()];
+            }
+            else{
+                //filter key value pairs
+                tokens = tokens.filter(function(token: string): boolean{
+                    if(token.indexOf('=') !== -1)
+                        return true;
+                    return false;
+                });
+            }
 
             //extract key value pairs
             tokens.forEach((token: string): void => {
@@ -76,10 +81,30 @@ module ue4viz{
             return key in this.kv;
         }
 
-        parseToken(token: string): string {
-            if(token[0] === '"' && token[token.length - 1] === '"'){
+        parseToken(token: string): string|number|{} {
+            if(this.isStringToken(token)){
                 token = token.substr(1, token.length - 2);
             }
+            else if(this.isMultiToken(token)){
+                token = token.substr(1, token.length - 2);
+
+                var tokens = token.split(',');
+                var values = {};
+
+                tokens.forEach((token: string): void => {
+                    var split = token.indexOf('=');
+                    var key = token.substr(0,split).trim();
+                    var value = token.substr(split+1).trim();
+
+                    values[key] = this.parseToken(value);
+                });
+
+                return values;
+            }
+
+            var floatToken = parseFloat(token);
+            if(!isNaN(floatToken))
+                return floatToken;
 
             return token;
         }
@@ -90,6 +115,18 @@ module ue4viz{
 
         isClassEndTag(): boolean {
             return this.line.indexOf('End Object') != -1;
+        }
+
+        isStringToken(token: string): boolean {
+            return token[0] === '"' && token[token.length - 1] === '"';
+        }
+
+        isMultiToken(token: string): boolean {
+            return token[0] === '(' && token[token.length - 1] === ')';
+        }
+
+        isCommentToken(token: string): boolean {
+            return token.trim().indexOf("NodeComment=") === 0;
         }
 
         isObjectStartBlock(): boolean {
@@ -143,11 +180,27 @@ module ue4viz{
             var name;
 
             this.next();
+            //loop through the block
             while(!this.line().isClassEndTag() && this.line().getIdentation() !== blockLevel){
 
+                //check for class start tag in block e.g. nodes
                 if(this.line().isClassStartTag() && this.line().getIdentation() === blockLevel+1){
                     name = this.line().getValueFor('Name');
                     node[name] = this.parseBlock();
+                }
+                //check for object start tag in block e.g. pin definitions
+                else if(this.line().isObjectStartBlock() && this.line().getIdentation() === blockLevel+1){
+                    name = this.line().getValueFor('Name');
+                    node[name] = this.parseBlock();
+                }
+                //check for values in the block level
+                else if(this.line().getIdentation() === blockLevel+1){
+                    var values = this.line().getKeyValues();
+                    var keys = Object.keys(values);
+
+                    keys.forEach((key) => {
+                        node[key] = values[key];
+                    });
                 }
 
                 this.next();
