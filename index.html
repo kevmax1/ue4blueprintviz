@@ -61,7 +61,7 @@
         <canvas id="background"></canvas>
         <svg id="lines"></svg>
         <div id="nodes">
-            <img src="http://www.newellstravel.co.uk/static/media/specials/445/Stock%20image%20alps%20%20snow%20freeimage-4900827-high.jpg">
+            <img src="http://kwww.newellstravel.co.uk/static/media/specials/445/Stock%20image%20alps%20%20snow%20freeimage-4900827-high.jpg">
         </div>
     </div>
     <div id="paste">
@@ -72,7 +72,6 @@
 <script type="text/javascript" src="ue4blueprintviz.js"></script>
 <script type="text/javascript">
     window.onload = function(e){
-        ue4viz.parseBlueprint();
 
         drawGrid();
 
@@ -80,7 +79,7 @@
 
         pastefield.addEventListener('paste', function(e){
             var pasted = e.clipboardData.getData('text/plain');
-            console.log(pasted);
+            ue4viz.parseBlueprint(pasted);
         });
 
         var bpEl = document.getElementById('bp');
