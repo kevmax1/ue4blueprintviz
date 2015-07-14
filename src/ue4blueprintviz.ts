@@ -142,6 +142,7 @@ module ue4viz{
         private blueprint: string[] = [];
         private lineParser = new LineParser("");
         private currentLine = 0;
+        private malformed = false;
         public currentBlockLevel = 0;
 
         constructor(blueprint: string){
@@ -167,6 +168,10 @@ module ue4viz{
             return this.currentLine >= this.blueprint.length;
         }
 
+        isMalformed(): boolean{
+            return this.malformed;
+        }
+
         next(): void{
             this.currentLine++;
             if(this.currentLine < this.blueprint.length) {
@@ -181,7 +186,7 @@ module ue4viz{
 
             this.next();
             //loop through the block
-            while(!this.line().isClassEndTag() && this.line().getIdentation() !== blockLevel){
+            while(!this.line().isClassEndTag() && this.line().getIdentation() !== blockLevel && !this.isEOF()){
 
                 //check for class start tag in block e.g. nodes
                 if(this.line().isClassStartTag() && this.line().getIdentation() === blockLevel+1){
@@ -206,11 +211,16 @@ module ue4viz{
                 this.next();
             }
 
+            //each block should end with 'End Object' and on the same block level
+            if(!this.line().isObjectEndBlock() && this.line().getIdentation() !== blockLevel) {
+                this.malformed = true;
+            }
+
             return node;
         }
     }
 
-    export function parseBlueprint(markup): void{
+    export function parseBlueprint(markup): Array<{}>{
         var parser = new Parser(markup);
         var nodes = [];
         var node = {};
@@ -228,6 +238,9 @@ module ue4viz{
             parser.next();
         }
 
-        console.dir(nodes);
+        if(parser.isMalformed())
+            nodes = [];
+
+        return nodes;
     }
 }
