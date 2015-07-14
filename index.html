@@ -79,7 +79,9 @@
 
         pastefield.addEventListener('paste', function(e){
             var pasted = e.clipboardData.getData('text/plain');
-            ue4viz.parseBlueprint(pasted);
+            var nodes = ue4viz.parseBlueprint(pasted);
+
+            console.dir(nodes);
         });
 
         var bpEl = document.getElementById('bp');
