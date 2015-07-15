@@ -41,7 +41,7 @@ module ue4viz{
             var tokens: string[] = this.line.trim().split(' ');
             var values = {};
 
-            if(this.isCommentToken(this.line)){
+            if(this.isMultiStringToken(this.line)){
                 tokens = [this.line.trim()];
             }
             else{
@@ -121,12 +121,20 @@ module ue4viz{
             return token[0] === '"' && token[token.length - 1] === '"';
         }
 
-        isMultiToken(token: string): boolean {
-            return token[0] === '(' && token[token.length - 1] === ')';
+        isMultiStringToken(token: string): boolean {
+            var keys = [
+                'NodeComment=',
+                'ErrorMsg=',
+                'PinToolTip='
+            ];
+
+            return keys.some(function(key){
+                return token.trim().indexOf(key) === 0;
+            });
         }
 
-        isCommentToken(token: string): boolean {
-            return token.trim().indexOf("NodeComment=") === 0;
+        isMultiToken(token: string): boolean {
+            return token[0] === '(' && token[token.length - 1] === ')';
         }
 
         isObjectStartBlock(): boolean {
