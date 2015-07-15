@@ -151,7 +151,6 @@ module UE4Lib{
         private lineParser = new LineParser("");
         private currentLine = 0;
         private malformed = false;
-        public currentBlockLevel = 0;
 
         constructor(blueprint: string){
             this.load(blueprint);
