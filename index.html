@@ -69,7 +69,7 @@
         <textarea id="paste-field"></textarea>
     </div>
 </div>
-<script type="text/javascript" src="ue4blueprintviz.js"></script>
+<script type="text/javascript" src="ue4lib.js"></script>
 <script type="text/javascript">
     window.onload = function(e){
 
@@ -79,7 +79,7 @@
 
         pastefield.addEventListener('paste', function(e){
             var pasted = e.clipboardData.getData('text/plain');
-            var nodes = ue4viz.parseBlueprint(pasted);
+            var nodes = UE4Lib.parseBlueprint(pasted);
 
             console.dir(nodes);
         });

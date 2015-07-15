@@ -25,10 +25,10 @@ gulp.task('watch', function() {
 
 gulp.task('compile', function(){
     var options = {
-        out: 'ue4blueprintviz.js'
+        out: 'ue4lib.js'
     };
 
-    gulp.src(['src/**/*.ts'])
+    gulp.src(['src/Main.ts'])
         .pipe(typescript(options))
         .pipe(gulp.dest(dest));
 });
