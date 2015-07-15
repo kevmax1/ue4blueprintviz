@@ -81,6 +81,7 @@
             var pasted = e.clipboardData.getData('text/plain');
             var nodes = UE4Lib.parseBlueprint(pasted);
 
+            UE4Lib.drawBlueprint(nodes);
             console.dir(nodes);
         });
 

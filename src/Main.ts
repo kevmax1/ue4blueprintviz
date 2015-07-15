@@ -1,4 +1,5 @@
 /// <reference path="Parser.ts" />
+/// <reference path="Drawing.ts" />
 
 module UE4Lib{
 
