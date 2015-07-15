@@ -27,9 +27,14 @@ module UE4Lib{
 
             spaces = this.line.indexOf(trimmedLine);
 
-            if(spaces>0){
-                if(spaces%3 !== 0) {
-                    console.warn('malformed indentation level-> ' + spaces + ' spaces:' + this.line);
+            if(spaces > 0){
+                try {
+                    if (spaces % 3 !== 0) {
+                        throw 'malformed indentation level-> ' + spaces + ' spaces:' + this.line;
+                    }
+                }
+                catch(e){
+                    console.error(e);
                 }
                 return Math.floor(spaces/3);
             }
