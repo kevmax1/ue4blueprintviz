@@ -219,7 +219,7 @@ module ue4viz{
                 this.next();
             }
 
-            //each block should end with 'End Object' and on the same block level
+            //each block should end with 'End Object' on the same block level
             if(!this.line().isObjectEndBlock() && this.line().getIdentation() !== blockLevel) {
                 this.malformed = true;
             }
