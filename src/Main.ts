@@ -10,7 +10,7 @@ module UE4Lib{
         //iterate through the blueprint
         while(!parser.isEOF()){
 
-            if(parser.line().getIdentation() === 0 && parser.line().isClassStartTag()) {
+            if(parser.line().getIndentation() === 0 && parser.line().isClassStartTag()) {
                 var name = parser.line().getValueFor('Name');
                 node = {};
                 node[name] = parser.parseBlock();

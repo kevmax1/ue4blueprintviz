@@ -21,7 +21,7 @@ module UE4Lib{
             return this;
         }
 
-        getIdentation(): number {
+        getIndentation(): number {
             var spaces: number;
             var trimmedLine = this.line.trim();
 
@@ -187,26 +187,26 @@ module UE4Lib{
         }
 
         parseBlock(): {} {
-            var blockLevel: number = this.line().getIdentation();
+            var blockLevel: number = this.line().getIndentation();
             var node = {};
             var name;
 
             this.next();
             //loop through the block
-            while(!this.line().isClassEndTag() && this.line().getIdentation() !== blockLevel && !this.isEOF()){
+            while(!this.line().isClassEndTag() && this.line().getIndentation() !== blockLevel && !this.isEOF()){
 
                 //check for class start tag in block e.g. nodes
-                if(this.line().isClassStartTag() && this.line().getIdentation() === blockLevel+1){
+                if(this.line().isClassStartTag() && this.line().getIndentation() === blockLevel+1){
                     name = this.line().getValueFor('Name');
                     node[name] = this.parseBlock();
                 }
                 //check for object start tag in block e.g. pin definitions
-                else if(this.line().isObjectStartBlock() && this.line().getIdentation() === blockLevel+1){
+                else if(this.line().isObjectStartBlock() && this.line().getIndentation() === blockLevel+1){
                     name = this.line().getValueFor('Name');
                     node[name] = this.parseBlock();
                 }
                 //check for values in the block level
-                else if(this.line().getIdentation() === blockLevel+1){
+                else if(this.line().getIndentation() === blockLevel+1){
                     var values = this.line().getKeyValues();
                     var keys = Object.keys(values);
 
@@ -219,7 +219,7 @@ module UE4Lib{
             }
 
             //each block should end with 'End Object' on the same block level
-            if(!this.line().isObjectEndBlock() && this.line().getIdentation() !== blockLevel) {
+            if(!this.line().isObjectEndBlock() && this.line().getIndentation() !== blockLevel) {
                 this.malformed = true;
             }
 
