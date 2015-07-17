@@ -13,8 +13,10 @@ module UE4Lib{
 
             if(parser.line().getIndentation() === 0 && parser.line().isClassStartTag()) {
                 var name = parser.line().getValueFor('Name');
+                var _class = parser.line().getValueFor('Class');
                 node = {};
-                node[name] = parser.parseBlock();
+                node[_class] = parser.parseBlock();
+                node[_class].Name = name;
                 nodes.push(node);
             }
 
