@@ -2,6 +2,7 @@
 /// <reference path="Drawing.ts" />
 
 module UE4Lib{
+    'use strict';
 
     export function parseBlueprint(markup): Array<{}>{
         var parser = new Parser(markup);

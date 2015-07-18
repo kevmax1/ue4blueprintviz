@@ -1,4 +1,6 @@
 module UE4Lib{
+    'use strict';
+
     export function drawBlueprint(blueprint): void{
         //todo
         console.dir(getSize(blueprint));

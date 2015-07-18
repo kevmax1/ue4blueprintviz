@@ -1,4 +1,5 @@
 module UE4Lib{
+    'use strict';
 
     //Utility functions for line parsing
     class LineParser{
@@ -195,20 +196,38 @@ module UE4Lib{
             var blockLevel: number = this.line().getIndentation();
             var node = {};
             var name;
+            var _class;
 
             this.next();
+
+            //console.warn(this.line().getValueFor('Name'));
+
             //loop through the block
             while(!this.line().isClassEndTag() && this.line().getIndentation() !== blockLevel && !this.isEOF()){
 
                 //check for class start tag in block e.g. nodes
                 if(this.line().isClassStartTag() && this.line().getIndentation() === blockLevel+1){
                     name = this.line().getValueFor('Name');
+                    _class = this.line().getValueFor('Class');
                     node[name] = this.parseBlock();
+                    node[name].Name = name;
+                    node[name].Class = _class;
                 }
                 //check for object start tag in block e.g. pin definitions
                 else if(this.line().isObjectStartBlock() && this.line().getIndentation() === blockLevel+1){
                     name = this.line().getValueFor('Name');
-                    node[name] = this.parseBlock();
+
+                    if(name in node){
+                        //append properties
+                        var append = this.parseBlock();
+
+                        Object.keys(append).forEach(function(key){
+                            node[name][key] = append[key];
+                        });
+                    }
+                    else{
+                        node[name] = this.parseBlock();
+                    }
                 }
                 //check for values in the block level
                 else if(this.line().getIndentation() === blockLevel+1){
