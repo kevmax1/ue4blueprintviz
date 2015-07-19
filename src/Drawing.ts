@@ -1,3 +1,5 @@
+/// <reference path="Blueprint.ts" />
+
 module UE4Lib{
     'use strict';
 

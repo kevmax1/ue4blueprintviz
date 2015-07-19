@@ -4,7 +4,7 @@
 module UE4Lib{
     'use strict';
 
-    export function parseBlueprint(markup): Array<{}>{
+    export function parseBlueprint(markup): Blueprint{
         var parser = new Parser(markup);
         var nodes = [];
         var node = {};
@@ -29,6 +29,6 @@ module UE4Lib{
         if(parser.isMalformed())
             nodes = [];
 
-        return nodes;
+        return parser.getBlueprint(nodes);
     }
 }

@@ -1,3 +1,5 @@
+/// <reference path="Blueprint.ts" />
+
 module UE4Lib{
     'use strict';
 
@@ -248,6 +250,11 @@ module UE4Lib{
             }
 
             return node;
+        }
+
+        getBlueprint(parsedBP: ParsedBlueprint): Blueprint{
+            //todo
+            return new Blueprint(parsedBP);
         }
     }
 }
