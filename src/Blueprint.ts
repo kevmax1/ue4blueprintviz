@@ -22,8 +22,16 @@ module UE4Lib{
         constructor(data){
             this._data = data;
 
+            //filter pins
+            var attributes = Object.keys(this._data);
+            attributes.forEach((attr: string) => {
+                if(attr.indexOf('EdGraphPin_') !== -1){
+                    this._pins.push(new Pin(this._data[attr]));
+                }
+            });
+
             //todo parse pin data
-            this._pins.push(new Pin({}));
+            //this._pins.push(new Pin({}));
         }
 
         getProperty(name: string): any{
@@ -43,7 +51,7 @@ module UE4Lib{
     }
 
     interface IPin{
-
+        getProperty(property: string): any;
     }
 
     class Pin implements IPin{
@@ -51,6 +59,13 @@ module UE4Lib{
 
         constructor(parsedPin: {}){
             this._data = parsedPin;
+        }
+
+        getProperty(property: string): any{
+            if(property in this._data)
+                return this._data[property];
+
+            return false;
         }
     }
 
@@ -60,7 +75,8 @@ module UE4Lib{
         //new(parsedBP?: ParsedBlueprint);
         getSize(): BP_Size;
         getNodeByName(name: string): Node|void;
-        getNodesByProperty(property: string): Node|void;
+        getNodesByClass(classType: string): Node[]|void;
+        getNodesByProperty(property: string): Node[]|void;
     }
 
     export class Blueprint implements IBlueprint{
@@ -73,12 +89,11 @@ module UE4Lib{
                 this._data.push(new Node(node));
             });
 
-            console.group('Names');
+            /*console.group('Names');
             this._data.forEach((node) => {
                 console.info(node.getName());
             });
-            //console.groupEnd('Names');
-            console.groupEnd();
+            console.groupEnd();*/
         }
 
         getSize(){
@@ -88,12 +103,48 @@ module UE4Lib{
             }
         }
 
-        getNodeByName(name: string): Node{
-            return this._data[0];
+        getNodeByName(name: string): Node|void{
+            var match: Node = null;
+
+            this._data.forEach((node: Node) => {
+                if(node.getName() === name)
+                    match = node;
+            });
+
+            return match;
         }
 
-        getNodesByProperty(property: string): Node{
-            return this._data[0];
+        getNodesByClass(classType: string): Node[]|void{
+            var nodes: Node[];
+
+            nodes = this._data.filter((node: Node) => {
+                return (node.getClass() === classType) ? true : false;
+            });
+
+            return nodes;
+        }
+
+        getNodesByProperty(property: string): Node[]|void{
+            var filteredNodes: Node[] = [];
+
+            this._data.forEach((node: Node) => {
+                if(node.getProperty(property) !== null)
+                    filteredNodes.push(node);
+            });
+
+            return filteredNodes;
+        }
+        //@debug
+        printNodeClasses(): void{
+            /*var classes = new Set();
+
+            this._data.forEach((node: Node) => {
+                classes.add(node.getClass());
+            });
+
+            classes.forEach((_class) => {
+                console.log(_class);
+            });*/
         }
     }
 }
