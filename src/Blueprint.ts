@@ -1,150 +1,283 @@
-module UE4Lib{
-    'use strict';
+PoolPartyPage.prototype.Corpus.CandidateConcepts = (function () {
 
-    interface BP_Size{
-        height: number;
-        width: number;
-    }
+    var displayOverview = function () {
+        ajax.get("!/candidate/view/list", function (resp) {
+            dom.get("centertablecontent").innerHTML = resp.responseText;
+            setupTable();
+        });
+    };
 
-    interface BP_Pos{
-        x: number;
-        y: number;
-    }
+    var setupTable = function () {
+        var dataSource = new YAHOO.util.DataSource("!/candidate/concept");
+        dataSource.responseType = YAHOO.util.DataSource.TYPE_JSON;
+        dataSource.responseSchema = {
+            resultsList: "data",
+            fields: [
+                {key: "uri.uri"},
+                {key: "created"},
+                {key: "label"},
+                {key: "lang"},
+                {key: "broader"},
+                {key: "narrower"},
+                {key: "corpusUris"}
+            ],
+            metaFields: {
+                totalRecords: "totalRecords",
+                startIndex: "startIndex",
+                pageSize: "pageSize",
+                params: "params"
+            }
+        };
 
-    interface INode{
+        var dateFormatter = function (elLiner, oRecord, oColumn, oData) {
+            elLiner.innerHTML = Locale.getDateString(oData);
+        };
 
-    }
+        var columnDefs = [
+            {key: "created", label: "Created", sortable: false, formatter: dateFormatter},
+            {key: "label", label: "Label", sortable: false},
+            {key: "action", label: "Action", sortable: false}
+        ];
 
-    class Node implements INode{
-        private _data;
-        private _pins: Pin[] = [];
+        var config = {
+            initialRequest: "",
+            generateRequest: PPP.CustomRdf._generateRequest,
+            dynamicData: true,
+            paginator: new YAHOO.widget.Paginator({
+                rowsPerPage: 20,
+                alwaysVisible: false
+            }),
+            MSG_EMPTY: Locale.getString("corpus.candidate.no.results")
+        };
 
-        constructor(data){
-            this._data = data;
+        var dataTable = new YAHOO.widget.DataTable("candidateConceptsTable", columnDefs, dataSource, config);
+        dataTable.doBeforeLoadData = function (oRequest, oResponse, oPayload) {
+            oPayload.totalRecords = oResponse.meta.totalRecords;
+            oPayload.pagination.recordOffset = oResponse.meta.startIndex;
+            return oPayload;
+        };
 
-            //filter pins
-            var attributes = Object.keys(this._data);
-            attributes.forEach((attr: string) => {
-                if(attr.indexOf('EdGraphPin_') !== -1){
-                    this._pins.push(new Pin(this._data[attr]));
+        // hover + select
+        //
+        dataTable.subscribe("rowMouseoverEvent", dataTable.onEventHighlightRow);
+        dataTable.subscribe("rowMouseoutEvent", dataTable.onEventUnhighlightRow);
+        dataTable.subscribe("rowClickEvent", dataTable.onEventSelectRow);
+
+
+        // select all / none
+        //
+        YAHOO.util.Event.addListener("corpus-candidate-select-all", "click", function () {
+            for (var i = 0; i < dataTable.getRecordSet().getLength(); i++) {
+                dataTable.selectRow(i);
+            }
+        });
+        YAHOO.util.Event.addListener("corpus-candidate-select-none", "click", function () {
+            for (var i = 0; i < dataTable.getRecordSet().getLength(); i++) {
+                dataTable.unselectRow(i);
+            }
+        });
+        YAHOO.util.Event.addListener("corpus-candidate-delete", "click", function () {
+            var rowIds = dataTable.getSelectedRows();
+
+            var uris = [];
+
+            if (rowIds.length == 0) {
+                return;
+            }
+
+            for (var i = 0; i < rowIds.length; i++) {
+                var rowId = rowIds[i];
+                if (rowId != undefined && rowId != null) {
+                    var record = dataTable.getRecord(rowId);
+                    if (record != null) {
+                        uris.push(new URI(record.getData("uri.uri")));
+                    }
+                }
+            }
+            ajax.postJson("!/candidate/concept/delete/", uris, function (resp) {
+                for (i = 0; i < rowIds.length; i++) {
+                    dataTable.deleteRow(dataTable.getRecord(rowIds[i]));
                 }
             });
+        });
 
-            //todo parse pin data
-            //this._pins.push(new Pin({}));
-        }
+        new PPP.ThesaurusIntegration(dataTable)
+            .setSelectTermFormatter(function (record) {
+                return "<div class='term'>" + record.getData("label") + "</div>"
+            })
+            .postPath("!/candidate/bind")
+            .postHandler(function (_) {
+                displayOverview();
+            })
+            .build();
 
-        getProperty(name: string): any{
-            if(name in this._data)
-                return this._data[name];
+    };
 
-            return null;
-        }
+    var showDetails = function (candidateUri) {
+        ajax.get("!/candidate/view/" + encodeURIComponent(candidateUri), function (resp) {
+            dom.get("centertablecontent").innerHTML = resp.responseText;
+        });
+    };
 
-        getName(): string{
-            return this.getProperty('Name');
-        }
+    return {
+        displayOverview: displayOverview,
+        showDetails: showDetails,
+        setupTable: setupTable
+    };
+})();
 
-        getClass(): string{
-            return this.getProperty('Class');
-        }
-    }
+PoolPartyPage.prototype.Corpus.ThesaurusTree = (function(){
+    'use strict';
 
-    interface IPin{
-        getProperty(property: string): any;
-    }
+    var loadChildren = function(targetNode){
 
-    class Pin implements IPin{
-        private _data: {};
+    };
 
-        constructor(parsedPin: {}){
-            this._data = parsedPin;
-        }
+    var init = function(){
+        var tree = new YAHOO.widget.TreeView("thesaurus-nav");
+        var root = tree.getRoot();
 
-        getProperty(property: string): any{
-            if(property in this._data)
-                return this._data[property];
+        tree.subscribe("clickEvent", function(oArgs){
+            var node = oArgs.node;
+            var uri = node.data.uri;
+            console.dir("todo show details for " + uri);
 
-            return false;
-        }
-    }
+            return false;   //disable collapse on click
+        });
 
-    export type ParsedBlueprint = Array<{}>;
+        tree.setDynamicLoad(function (targetNode, finished) {
+            var params = "";
 
-    interface IBlueprint{
-        //new(parsedBP?: ParsedBlueprint);
-        getSize(): BP_Size;
-        getNodeByName(name: string): Node|void;
-        getNodesByClass(classType: string): Node[]|void;
-        getNodesByProperty(property: string): Node[]|void;
-    }
-
-    export class Blueprint implements IBlueprint{
-        private _data: Node[];
-
-        constructor(parsedBP: ParsedBlueprint){
-            this._data = [];
-
-            parsedBP.forEach((node) => {
-                this._data.push(new Node(node));
-            });
-
-            /*console.group('Names');
-            this._data.forEach((node) => {
-                console.info(node.getName());
-            });
-            console.groupEnd();*/
-        }
-
-        getSize(){
-            return {
-                height: 0,
-                width: 0
+            if('uri' in targetNode.data){
+                params = "parentUri=" + targetNode.data.uri;
             }
-        }
 
-        getNodeByName(name: string): Node|void{
-            var match: Node = null;
 
-            this._data.forEach((node: Node) => {
-                if(node.getName() === name)
-                    match = node;
+            ajax.post("!/tree", params, function (resp) {
+                var nodes = JSON.parse(resp.responseText);
+
+                nodes.forEach(function (node) {
+                    var count = " (" + node.nodeChildren + ")";
+                    var className = "conceptScheme";
+
+                    if(targetNode.data.nodeType === "http://www.w3.org/2004/02/skos/core#ConceptScheme")
+                        className = "topConcept";
+                    else if(targetNode.data.nodeType === "http://www.w3.org/2004/02/skos/core#Concept")
+                        className = "subConcept";
+
+                    var htmlMarkup = "<div class='" + className + "'>" + node.nodeLabel + count + "</div>";
+                    var tempNode = new YAHOO.widget.HTMLNode(htmlMarkup, targetNode, false);
+                    tempNode.data.uri = node.nodeURI;
+                    tempNode.data.nodeType = node.nodeType;
+
+                    if(node.nodeChildren === 0)
+                        tempNode.isLeaf = true;
+                });
+
+                finished();
             });
+        }, 1);
 
-            return match;
-        }
+        var htmlMarkup = "<div class='context'>Thesaurus</div>";
+        var thesaurusNode = new YAHOO.widget.HTMLNode(htmlMarkup, root, false);
 
-        getNodesByClass(classType: string): Node[]|void{
-            var nodes: Node[];
+        tree.draw();
 
-            nodes = this._data.filter((node: Node) => {
-                return (node.getClass() === classType) ? true : false;
-            });
+    };
 
-            return nodes;
-        }
-
-        getNodesByProperty(property: string): Node[]|void{
-            var filteredNodes: Node[] = [];
-
-            this._data.forEach((node: Node) => {
-                if(node.getProperty(property) !== null)
-                    filteredNodes.push(node);
-            });
-
-            return filteredNodes;
-        }
-        //@debug
-        printNodeClasses(): void{
-            /*var classes = new Set();
-
-            this._data.forEach((node: Node) => {
-                classes.add(node.getClass());
-            });
-
-            classes.forEach((_class) => {
-                console.log(_class);
-            });*/
-        }
+    return {
+        init: init,
+        loadChildren: loadChildren
     }
-}
+})();
+
+PoolPartyPage.prototype.Corpus.CandidateConcepts.Tree = (function () {
+    var _tree = null;
+
+    var init = function () {
+        var candidateNode = PPP.CorpusTree.getNodeByProperty("nodeType", "candidateroot");
+        PPP.Corpus.CandidateConcepts.Tree.root = _tree = candidateNode;
+
+        if (candidateNode !== null) {
+            candidateNode.setDynamicLoad(function (targetNode, finished) {
+                ajax.get("!/candidate/tree", function (resp) {
+                    var nodes = JSON.parse(resp.responseText);
+
+                    nodes.forEach(function (node) {
+                        var htmlMarkup = "<div class='candidateconcept'>" + node.label + "</div>";
+                        var tempNode = new YAHOO.widget.HTMLNode(htmlMarkup, targetNode, false);
+                        tempNode.data.uri = node.uri.uri;
+                        tempNode.data.nodeType = "candidateconcept";
+
+                        tempNode.isLeaf = false;
+                    });
+
+                    finished();
+                });
+            });
+        }
+    };
+
+    var refresh = function () {
+        if (_tree.expanded === false)
+            return;
+
+        PPP.Corpus.CandidateConcepts.Tree.root.tree.removeChildren(_tree);
+        PPP.Corpus.CandidateConcepts.Tree.root.expand();
+    };
+
+    var isExpanded = function () {
+        return _tree.expanded;
+    };
+
+    /**
+     *
+     * @param params
+     * label
+     * lang
+     */
+    var addConcept = function (params) {
+
+        //test
+        if (typeof params === "undefined") {
+            params = {
+                label: "foo",
+                lang: "en"
+            };
+        }
+
+        ajax.postJson("!/candidate/concept", params, function (resp) {
+            PPP.Corpus.CandidateConcepts.Tree.refresh();
+        });
+    };
+
+    var deleteConcept = function (uri) {
+        var params = [new URI(uri)];
+
+        ajax.postJson("!/candidate/concept/delete", params, function (resp) {
+            var status = JSON.parse(resp.responseText);
+
+            if (status.success) {
+                PPP.Corpus.CandidateConcepts.Tree.refresh();
+                document.getElementsByClassName("candidateroot")[0].click();
+            }
+        });
+    };
+
+    var show = function() {
+        alert("not yet implemetned");
+        // todo:
+        // - simulate click in tree,
+        // - highlight node
+        // - display candy overview in details view
+    };
+
+    return {
+        init: init,
+        show: show,
+        refresh: refresh,
+        isExpanded: isExpanded,
+        addConcept: addConcept,
+        deleteConcept: deleteConcept
+    }
+})();
