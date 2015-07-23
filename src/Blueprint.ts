@@ -52,6 +52,10 @@ module UE4Lib{
 
     interface IPin{
         getProperty(property: string): any;
+        isInput(): boolean;
+        isOutput(): boolean;
+        isHidden(): boolean;
+        isConnected(): boolean;
     }
 
     class Pin implements IPin{
@@ -67,6 +71,33 @@ module UE4Lib{
 
             return false;
         }
+
+        isInput(): boolean{
+            return !this.isOutput();
+        }
+
+        isOutput(): boolean{
+            var direction = this.getProperty('Direction');
+
+            if(direction !== false && direction === 'EGPD_Output')
+                return true;
+
+            return false;
+        }
+
+        isHidden(): boolean{
+            var hidden = this.getProperty('bHidden');
+
+            if(hidden !== false && hidden === 'True')
+                return true;
+
+            return false;
+        }
+
+        isConnected(): boolean{
+            //todo
+            return true;
+        }
     }
 
     export type ParsedBlueprint = Array<{}>;
@@ -75,6 +106,7 @@ module UE4Lib{
         //new(parsedBP?: ParsedBlueprint);
         getSize(): BP_Size;
         getNodeByName(name: string): Node|void;
+        getNodeByPin(pinName: string): Node|void;
         getNodesByClass(classType: string): Node[]|void;
         getNodesByProperty(property: string): Node[]|void;
     }
@@ -90,10 +122,10 @@ module UE4Lib{
             });
 
             /*console.group('Names');
-            this._data.forEach((node) => {
-                console.info(node.getName());
-            });
-            console.groupEnd();*/
+             this._data.forEach((node) => {
+             console.info(node.getName());
+             });
+             console.groupEnd();*/
         }
 
         getSize(){
@@ -134,17 +166,23 @@ module UE4Lib{
 
             return filteredNodes;
         }
+
+        //todo
+        getNodeByPin(pinName: string): Node|void{
+            return null;
+        }
+
         //@debug
         printNodeClasses(): void{
             /*var classes = new Set();
 
-            this._data.forEach((node: Node) => {
-                classes.add(node.getClass());
-            });
+             this._data.forEach((node: Node) => {
+             classes.add(node.getClass());
+             });
 
-            classes.forEach((_class) => {
-                console.log(_class);
-            });*/
+             classes.forEach((_class) => {
+             console.log(_class);
+             });*/
         }
     }
 }
