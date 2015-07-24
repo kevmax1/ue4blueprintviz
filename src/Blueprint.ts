@@ -12,7 +12,10 @@ module UE4Lib{
     }
 
     interface INode{
-
+        hasPin(pinName: string): boolean;
+        getClass(): string;
+        getName(): string;
+        getProperty(name: string): any;
     }
 
     class Node implements INode{
@@ -30,8 +33,6 @@ module UE4Lib{
                 }
             });
 
-            //todo parse pin data
-            //this._pins.push(new Pin({}));
         }
 
         getProperty(name: string): any{
@@ -48,10 +49,18 @@ module UE4Lib{
         getClass(): string{
             return this.getProperty('Class');
         }
+
+        hasPin(pinName: string): boolean{
+            return this._pins.some((pin: Pin) => {
+                return pin.getName() === pinName ? true : false;
+            });
+        }
     }
 
     interface IPin{
         getProperty(property: string): any;
+        getName(): string;
+        getConnections(): string[]|void;
         isInput(): boolean;
         isOutput(): boolean;
         isHidden(): boolean;
@@ -60,8 +69,16 @@ module UE4Lib{
 
     class Pin implements IPin{
         private _data: {};
+        private _connectedTo: string[] = [];
 
         constructor(parsedPin: {}){
+            var keys: string[] = Object.keys(parsedPin);
+
+            keys.forEach((key: string) => {
+                if(key.indexOf('LinkedTo(') !== -1)
+                    this._connectedTo.push(parsedPin[key]);
+            });
+
             this._data = parsedPin;
         }
 
@@ -70,6 +87,10 @@ module UE4Lib{
                 return this._data[property];
 
             return false;
+        }
+
+        getName(): string{
+            return this.getProperty('Name');
         }
 
         isInput(): boolean{
@@ -95,9 +116,13 @@ module UE4Lib{
         }
 
         isConnected(): boolean{
-            //todo
-            return true;
+            return this._connectedTo.length > 0 ? true : false;
         }
+
+        getConnections(): string[]|void{
+            return this._connectedTo;
+        }
+
     }
 
     export type ParsedBlueprint = Array<{}>;
@@ -106,6 +131,7 @@ module UE4Lib{
         //new(parsedBP?: ParsedBlueprint);
         getSize(): BP_Size;
         getNodeByName(name: string): Node|void;
+        getNodesByNames(names: string[]): Node[]|void;
         getNodeByPin(pinName: string): Node|void;
         getNodesByClass(classType: string): Node[]|void;
         getNodesByProperty(property: string): Node[]|void;
@@ -121,11 +147,6 @@ module UE4Lib{
                 this._data.push(new Node(node));
             });
 
-            /*console.group('Names');
-             this._data.forEach((node) => {
-             console.info(node.getName());
-             });
-             console.groupEnd();*/
         }
 
         getSize(){
@@ -144,6 +165,20 @@ module UE4Lib{
             });
 
             return match;
+        }
+
+        getNodesByNames(names: string[]): Node[]|void{
+            var matches: Node[] = [];
+
+            names.forEach((name) => {
+                var match: Node|void = this.getNodeByName(name);
+
+                if(match !== null){
+                    matches.push(<Node>match);
+                }
+            });
+
+            return matches.length > 0 ? matches : null;
         }
 
         getNodesByClass(classType: string): Node[]|void{
@@ -169,7 +204,18 @@ module UE4Lib{
 
         //todo
         getNodeByPin(pinName: string): Node|void{
-            return null;
+            var match: Node = null;
+            var found = this._data.some((node: Node) => {
+                if(node.hasPin(pinName)){
+                    match = node;
+
+                    return true;
+                }
+
+                return false;
+            });
+
+            return (found !== false) ? match : null;
         }
 
         //@debug
