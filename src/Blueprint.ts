@@ -16,6 +16,8 @@ module UE4Lib{
         getClass(): string;
         getName(): string;
         getProperty(name: string): any;
+        getPosition(): BP_Pos;
+        getSize(): BP_Size;
     }
 
     class Node implements INode{
@@ -33,6 +35,20 @@ module UE4Lib{
                 }
             });
 
+        }
+
+        getPosition(): BP_Pos{
+            return {
+                x:0,
+                y:0
+            }
+        }
+
+        getSize(): BP_Size{
+            return {
+                width: 0,
+                height: 0
+            }
         }
 
         getProperty(name: string): any{
@@ -149,7 +165,7 @@ module UE4Lib{
 
         }
 
-        getSize(){
+        getSize(): BP_Size{
             return {
                 height: 0,
                 width: 0
