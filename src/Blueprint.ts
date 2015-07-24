@@ -39,15 +39,18 @@ module UE4Lib{
 
         getPosition(): BP_Pos{
             return {
-                x:0,
-                y:0
+                x: this.getProperty('NodePosX'),
+                y: this.getProperty('NodePosY')
             }
         }
 
         getSize(): BP_Size{
+            var width: number = this.getProperty('NodeWidth') || 0;
+            var height: number = this.getProperty('NodeHeight') || 0;
+
             return {
-                width: 0,
-                height: 0
+                width: width,
+                height: height
             }
         }
 
@@ -144,7 +147,6 @@ module UE4Lib{
     export type ParsedBlueprint = Array<{}>;
 
     interface IBlueprint{
-        //new(parsedBP?: ParsedBlueprint);
         getSize(): BP_Size;
         getNodeByName(name: string): Node|void;
         getNodesByNames(names: string[]): Node[]|void;
@@ -165,7 +167,9 @@ module UE4Lib{
 
         }
 
+        //todo
         getSize(): BP_Size{
+
             return {
                 height: 0,
                 width: 0
@@ -218,7 +222,6 @@ module UE4Lib{
             return filteredNodes;
         }
 
-        //todo
         getNodeByPin(pinName: string): Node|void{
             var match: Node = null;
             var found = this._data.some((node: Node) => {
