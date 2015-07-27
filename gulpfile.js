@@ -4,6 +4,7 @@ var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 var rename = require('gulp-rename');
 var typescript = require('gulp-tsc');
+var Server = require('karma').Server;
 
 var dest = 'dest/';
 
@@ -36,6 +37,13 @@ gulp.task('compile', function(){
 gulp.task('copy', function(){
     gulp.src('index.html')
         .pipe(gulp.dest(dest));
+});
+
+gulp.task('test', function (done) {
+    new Server({
+        configFile: __dirname + '/karma.js',
+        singleRun: true
+    }, done).start();
 });
 
 gulp.task('default', ['scripts', 'watch']);
