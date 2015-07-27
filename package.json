@@ -6,6 +6,10 @@
     "gulp-concat": "^2.6.0",
     "gulp-rename": "^1.2.2",
     "gulp-tsc": "^0.10.1",
-    "gulp-uglify": "^1.2.0"
+    "gulp-uglify": "^1.2.0",
+    "jasmine-core": "^2.3.4",
+    "karma": "^0.13.3",
+    "karma-chrome-launcher": "^0.2.0",
+    "karma-jasmine": "^0.3.6"
   }
 }
