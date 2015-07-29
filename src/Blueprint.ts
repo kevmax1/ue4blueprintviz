@@ -169,10 +169,21 @@ module UE4Lib{
 
         //todo
         getSize(): BP_Size{
+            var height: number = 0;
+            var width: number = 0;
+
+            //negative coordinates
+            var offsetHeight: number = 0;
+            var offsetWidth: number = 0;
+
+            //general safe area to add
+            var paddingHeight: number = 100;
+            var paddingWidth: number = 100;
+
 
             return {
-                height: 0,
-                width: 0
+                height: height + paddingHeight + Math.abs(offsetHeight),
+                width: width + paddingWidth + Math.abs(offsetWidth)
             }
         }
 
