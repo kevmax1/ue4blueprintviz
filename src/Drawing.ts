@@ -3,71 +3,103 @@
 module UE4Lib{
     'use strict';
 
-    export function drawBlueprint(blueprint): void{
-        //todo
-        console.dir(getSize(blueprint));
+    var gridSize = 16;
 
-        /*blueprint.forEach(function(node){
-            var type = Object.keys(node)[0];
-            if(type === 'EdGraphNode_Comment'){
-                console.debug('found comment');
-            }
-        });*/
+    export class GridColor {
+        static background: string = '#2A2A2A';
+        static primaryLine: string = '#353535';
+        static secondaryLine: string = '#1C1C1C';
     }
 
-    function getSize(blueprint): {} {
-        var minX = 0;
-        var minY = 0;
-        var maxX = 0;
-        var maxY = 0;
-        var paddingX = 200;
-        var paddingY = 200;
+    interface DrawGridLineParams {
+        ctx: CanvasRenderingContext2D;
+        color: string;
+        fromX: number;
+        fromY: number;
+        toX: number;
+        toY: number;
+    }
+    function drawGridLine(params: DrawGridLineParams) : void {
+        var ctx = params.ctx;
 
-        console.time('getSize');
-        blueprint.forEach(function(node){
-            node = node[Object.keys(node)[0]];
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(params.fromX, params.fromY);
+        ctx.lineTo(params.toX, params.toY);
+        ctx.strokeStyle = params.color;
+        ctx.stroke();
+    }
 
-            if('NodePosX' in node && 'NodePosY' in node){
-                if(isNaN(node.NodePosX))
-                    console.error(node.NodePosX);
-                else if(isNaN(node.NodePosY))
-                    console.error(node.NodePosY);
+    export function drawGrid(blueprint: Blueprint): void {
+        var size = blueprint.getSize();
+        console.log(blueprint.getSize());
 
+        var canvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById('background');
+        var ctx = canvas.getContext('2d');
 
-                if('NodeWidth' in node && 'NodeHeight' in node){
-                    if(isNaN(node.NodeWidth))
-                        console.error(node.NodeWidth);
-                    else if(isNaN(node.NodeHeight))
-                        console.error(node.NodeHeight);
+        canvas.width = size.width;
+        canvas.height = size.height;
+        canvas.style.width = size.width + 'px';
+        canvas.style.height = size.height + 'px';
 
-                    if(node.NodePosX < minX)
-                        minX = node.NodePosX;
-                    if(node.NodePosY < minY)
-                        minY = node.nodePosY;
+        console.log(ctx.globalCompositeOperation);
 
-                    if(node.NodePosX > maxX)
-                        maxX = node.NodeWidth + node.NodePosX;
-                    if(node.NodePosY > maxY)
-                        maxY = node.NodeHeight + node.NodePosY;
-                }
-                else{
-                    if(node.NodePosX < minX)
-                        minX = node.NodePosX;
-                    if(node.NodePosY < minY)
-                        minY = node.nodePosY;
+        ctx.globalCompositeOperation = 'normal';
+        ctx.fillStyle = GridColor.background;
+        ctx.fillRect(10, 10, 100, 100);
 
-                    if(node.NodePosX > maxX)
-                        maxX = node.NodePosX;
-                    if(node.NodePosY > maxY)
-                        maxY = node.NodePosY;
-                }
+        //draw small grid
+        for(var i=1; i<canvas.width; i++){
+            if(i % gridSize === 0){
+                drawGridLine({
+                    ctx: ctx,
+                    color: GridColor.primaryLine,
+                    fromX: i,
+                    fromY: 0,
+                    toX: i,
+                    toY: canvas.height
+                });
             }
-        });
-        console.timeEnd('getSize');
+        }
 
-        return {
-            height: Math.abs(minY) + Math.abs(maxY) + paddingY,
-            width: Math.abs(minX) + Math.abs(maxX) + paddingX
+        for(var i=1; i<canvas.height; i++){
+            if(i % gridSize === 0){
+                drawGridLine({
+                    ctx: ctx,
+                    color: GridColor.primaryLine,
+                    fromX: 0,
+                    fromY: i,
+                    toX: canvas.width,
+                    toY: i
+                });
+            }
+        }
+
+        //draw big grid
+        for(var i=1; i<canvas.width; i++){
+            if(i % (gridSize * 8) === 0){
+                drawGridLine({
+                    ctx: ctx,
+                    color: GridColor.secondaryLine,
+                    fromX: i,
+                    fromY: 0,
+                    toX: i,
+                    toY: canvas.height
+                });
+            }
+        }
+
+        for(var i=1; i<canvas.height; i++){
+            if(i % (gridSize * 8) === 0){
+                drawGridLine({
+                    ctx: ctx,
+                    color: GridColor.secondaryLine,
+                    fromX: 0,
+                    fromY: i,
+                    toX: canvas.width,
+                    toY: i
+                });
+            }
         }
     }
 }
