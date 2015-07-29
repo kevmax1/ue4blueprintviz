@@ -87,9 +87,6 @@
 <script type="text/javascript" src="ue4lib.js"></script>
 <script type="text/javascript">
     window.onload = function(e){
-
-        drawGrid();
-
         var pastefield = document.getElementById('paste-field');
 
         pastefield.addEventListener('paste', function(e){
@@ -99,6 +96,7 @@
             //UE4Lib.drawBlueprint(nodes);
             console.dir(nodes);
             nodes.printNodeClasses();
+            UE4Lib.drawGrid(nodes);
         });
 
         var bpEl = document.getElementById('bp');
@@ -141,17 +139,6 @@
 
     function init(elId){
         var container = document.getElementById(elId);
-    }
-
-    function drawGrid(){
-        var canvas = document.getElementById('background');
-        var ctx = canvas.getContext('2d');
-
-        ctx.fillStyle = "rgb(200,0,0)";
-        ctx.fillRect (10, 10, 55, 50);
-
-        ctx.fillStyle = "rgba(0, 0, 200, 0.5)";
-        ctx.fillRect (30, 30, 55, 50);
     }
 </script>
 </body>
