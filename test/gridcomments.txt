@@ -1,0 +1,34 @@
+Begin Object Class=EdGraphNode_Comment Name="EdGraphNode_Comment_5"
+   NodePosX=128
+   NodeWidth=256
+   NodeHeight=128
+   NodeComment="Comment"
+   NodeGuid=2BED09AF4B6AC4D6214E6F8827852450
+End Object
+Begin Object Class=EdGraphNode_Comment Name="EdGraphNode_Comment_8"
+   CommentColor=(R=0.000000,G=1.000000,B=0.000000,A=1.000000)
+   NodePosX=-512
+   NodePosY=-256
+   NodeWidth=384
+   NodeHeight=256
+   NodeComment="Comment"
+   NodeGuid=0E3729E04894A20011824D81A794665A
+End Object
+Begin Object Class=EdGraphNode_Comment Name="EdGraphNode_Comment_12"
+   CommentColor=(R=1.000000,G=0.000000,B=0.000000,A=1.000000)
+   NodePosX=128
+   NodePosY=-384
+   NodeWidth=512
+   NodeHeight=256
+   NodeComment="Comment"
+   NodeGuid=8D2014254F67045E14F9A393D476818A
+End Object
+Begin Object Class=EdGraphNode_Comment Name="EdGraphNode_Comment_23"
+   CommentColor=(R=0.000000,G=0.000000,B=1.000000,A=1.000000)
+   NodePosX=-640
+   NodePosY=128
+   NodeWidth=128
+   NodeHeight=128
+   NodeComment="Comment"
+   NodeGuid=1CD24B0B4249B499178F8899F4612501
+End Object
