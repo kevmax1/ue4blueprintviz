@@ -167,14 +167,20 @@ module UE4Lib{
 
         }
 
+        //remove negative x & y
+        _absoluteSize(): void{
+            var offsetHeight: number = 0;
+            var offsetWidth: number = 0;
+
+            this._data.forEach((node) => {
+
+            });
+        }
+
         //todo
         getSize(): BP_Size{
             var height: number = 0;
             var width: number = 0;
-
-            //negative coordinates
-            var offsetHeight: number = 0;
-            var offsetWidth: number = 0;
 
             //general safe area to add
             var paddingHeight: number = 100;
@@ -182,8 +188,8 @@ module UE4Lib{
 
 
             return {
-                height: height + paddingHeight + Math.abs(offsetHeight),
-                width: width + paddingWidth + Math.abs(offsetWidth)
+                height: height + paddingHeight * 2,
+                width: width + paddingWidth * 2
             }
         }
 
