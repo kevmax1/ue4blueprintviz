@@ -2,8 +2,8 @@ module UE4Lib{
     'use strict';
 
     interface BP_Size{
-        height: number;
         width: number;
+        height: number;
     }
 
     interface BP_Pos{
@@ -155,8 +155,43 @@ module UE4Lib{
         getNodesByProperty(property: string): Node[]|void;
     }
 
+    /*interface IBlueprintOptions{
+        _offsetHeight: number;
+        _offsetWidth: number;
+        _paddingHeight: number;
+        _paddingWidth: number;
+    }*/
+
+    class BlueprintConfig {
+        private _paddingHeight: number = 0;
+        private _paddingWidth: number = 0;
+
+        get paddingHeight(): number {
+            return this._paddingHeight >= 0 ? this._paddingHeight : 0;
+        }
+        set paddingHeight(padding: number) {
+            this._paddingHeight = padding;
+        }
+
+        get paddingWidth(): number {
+            return this._paddingWidth >= 0 ? this._paddingWidth : 0;
+        }
+        set paddingWidth(padding: number) {
+            this._paddingWidth = padding;
+        }
+    }
+
     export class Blueprint implements IBlueprint{
         private _data: Node[];
+        private _config: BlueprintConfig = new BlueprintConfig();
+        private _size: BP_Size = {
+            width: 0,
+            height: 0
+        };
+        private _offset: BP_Pos = {
+            x: 0,
+            y: 0
+        };
 
         constructor(parsedBP: ParsedBlueprint){
             this._data = [];
@@ -165,32 +200,50 @@ module UE4Lib{
                 this._data.push(new Node(node));
             });
 
+            this._size = this.calculateSize();
+            console.dir(this._size);
+            console.dir(this._offset);
         }
 
-        //remove negative x & y
-        _absoluteSize(): void{
-            var offsetHeight: number = 0;
-            var offsetWidth: number = 0;
+        calculateSize(): BP_Size {
+            var min_X: number = 0;
+            var min_Y: number = 0;
+            var max_X: number = 0;
+            var max_Y: number = 0;
 
-            this._data.forEach((node) => {
+            this._data.forEach((node: Node) => {
+                var pos: BP_Pos = node.getPosition();
+                var size: BP_Size = node.getSize();
 
+                if(pos.x < min_X){
+                    min_X = pos.x;
+                }
+                else if(pos.x + size.width > max_X){
+                    max_X = pos.x + size.width;
+                }
+
+                if(pos.y < min_Y){
+                    min_Y = pos.y;
+                }
+                else if(pos.y + size.height > max_Y){
+                    max_Y = pos.y + size.height;
+                }
             });
-        }
 
-        //todo
-        getSize(): BP_Size{
-            var height: number = 0;
-            var width: number = 0;
-
-            //general safe area to add
-            var paddingHeight: number = 100;
-            var paddingWidth: number = 100;
-
+            this._offset.x = min_X;
+            this._offset.y = min_Y;
 
             return {
-                height: height + paddingHeight * 2,
-                width: width + paddingWidth * 2
+                width: Math.sqrt(Math.pow(min_X - max_X, 2)) + this._config.paddingWidth,
+                height: Math.sqrt(Math.pow(min_Y - max_Y, 2)) + this._config.paddingHeight
             }
+        }
+
+        getSize(): BP_Size{
+            if(this._size.width === -1 && this._size.height === -1)
+                return this.calculateSize();
+
+            return this._size;
         }
 
         getNodeByName(name: string): Node|void{
