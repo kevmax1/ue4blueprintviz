@@ -26,6 +26,7 @@ gulp.task('watch', function() {
 
 gulp.task('compile', function(){
     var options = {
+        target: 'ES5',
         out: 'ue4lib.js'
     };
 
