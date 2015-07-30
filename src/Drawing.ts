@@ -4,6 +4,7 @@ module UE4Lib{
     'use strict';
 
     //static const float TitleBarColorMultiplier = 0.6f;
+    //SetColorAndOpacity
 
     var gridSize = 16;
 
