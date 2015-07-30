@@ -3,6 +3,8 @@
 module UE4Lib{
     'use strict';
 
+    //static const float TitleBarColorMultiplier = 0.6f;
+
     var gridSize = 16;
 
     export class GridColor {
