@@ -20,7 +20,7 @@ module UE4Lib{
         getSize(): BP_Size;
     }
 
-    class Node implements INode{
+    export class Node implements INode{
         private _data;
         private _pins: Pin[] = [];
 
@@ -73,6 +73,40 @@ module UE4Lib{
             return this._pins.some((pin: Pin) => {
                 return pin.getName() === pinName ? true : false;
             });
+        }
+
+        getCommentColor(): number[]{
+            const TitleBarColorMultiplier = 0.6;
+            var color = this.getProperty('CommentColor');
+
+            if(color !== null){
+                return [
+                    Math.floor(color.R * 255 * TitleBarColorMultiplier),  //R
+                    Math.floor(color.G * 255 * TitleBarColorMultiplier),  //G
+                    Math.floor(color.B * 255 * TitleBarColorMultiplier),  //B
+                    Math.floor(color.A * 255 * TitleBarColorMultiplier)   //A
+                ]
+            }
+            else if(this.getClass() === 'EdGraphNode_Comment'){
+                //white
+                return [
+                    Math.floor(255 * TitleBarColorMultiplier),  //R
+                    Math.floor(255 * TitleBarColorMultiplier),  //G
+                    Math.floor(255 * TitleBarColorMultiplier),  //B
+                    Math.floor(255 * TitleBarColorMultiplier)   //A
+                ]
+            }
+
+            return null;
+        }
+
+        getCommentColorAsCSS(): string {
+            var color = this.getCommentColor();
+
+            if(color === null)
+                return;
+
+            return 'rgba(' + color.join(',') + ')';
         }
     }
 
@@ -307,17 +341,8 @@ module UE4Lib{
             return (found !== false) ? match : null;
         }
 
-        //@debug
-        printNodeClasses(): void{
-            /*var classes = new Set();
-
-             this._data.forEach((node: Node) => {
-             classes.add(node.getClass());
-             });
-
-             classes.forEach((_class) => {
-             console.log(_class);
-             });*/
+        getNodes(): Node[] {
+            return this._data;
         }
     }
 }
