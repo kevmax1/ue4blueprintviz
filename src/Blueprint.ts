@@ -189,43 +189,38 @@ module UE4Lib{
         getNodesByProperty(property: string): Node[]|void;
     }
 
-    /*interface IBlueprintOptions{
-        _offsetHeight: number;
-        _offsetWidth: number;
-        _paddingHeight: number;
-        _paddingWidth: number;
-    }*/
+    interface IBlueprintConfig {
+        //blueprint dimensions
+        offset: BP_Pos;
+        size: BP_Size;
+        padding: BP_Size;
+    }
 
-    class BlueprintConfig {
-        private _paddingHeight: number = 0;
-        private _paddingWidth: number = 0;
-
-        get paddingHeight(): number {
-            return this._paddingHeight >= 0 ? this._paddingHeight : 0;
-        }
-        set paddingHeight(padding: number) {
-            this._paddingHeight = padding;
+    class BlueprintConfig implements IBlueprintConfig {
+        //offset from origin
+        offset: BP_Pos = {
+            x: 0,
+            y: 0
         }
 
-        get paddingWidth(): number {
-            return this._paddingWidth >= 0 ? this._paddingWidth : 0;
+        //size of the blueprint
+        size: BP_Size = {
+            width: 0,
+            height: 0
         }
-        set paddingWidth(padding: number) {
-            this._paddingWidth = padding;
+
+        //safe area to add, so the outer node don't stick right to the edge
+        //padding.width = 32 => padding left = 16; padding right = 16
+        //padding.height = 32 => padding top = 16; padding bottom = 16
+        padding: BP_Size = {
+            width: 0,
+            height: 0
         }
     }
 
     export class Blueprint implements IBlueprint{
         private _data: Node[];
         private _config: BlueprintConfig = new BlueprintConfig();
-        private _size: BP_Size = {
-            width: 0,
-            height: 0
-        };
-        private _offset: BP_Pos = {
-            x: 0,
-            y: 0
-        };
 
         constructor(parsedBP: ParsedBlueprint){
             this._data = [];
@@ -234,9 +229,9 @@ module UE4Lib{
                 this._data.push(new Node(node));
             });
 
-            this._size = this.calculateSize();
-            console.dir(this._size);
-            console.dir(this._offset);
+            this._config.size = this.calculateSize();
+            console.dir(this._config.size);
+            console.dir(this._config.offset);
         }
 
         calculateSize(): BP_Size {
@@ -264,20 +259,27 @@ module UE4Lib{
                 }
             });
 
-            this._offset.x = min_X;
-            this._offset.y = min_Y;
+            this._config.offset.x = min_X;
+            this._config.offset.y = min_Y;
 
             return {
-                width: Math.sqrt(Math.pow(min_X - max_X, 2)) + this._config.paddingWidth,
-                height: Math.sqrt(Math.pow(min_Y - max_Y, 2)) + this._config.paddingHeight
+                width: Math.sqrt(Math.pow(min_X - max_X, 2)) + this._config.padding.width,
+                height: Math.sqrt(Math.pow(min_Y - max_Y, 2)) + this._config.padding.height
             }
         }
 
         getSize(): BP_Size{
-            if(this._size.width === -1 && this._size.height === -1)
+            if(this._config.size.width === -1 && this._config.size.height === -1)
                 return this.calculateSize();
 
-            return this._size;
+            return this._config.size;
+        }
+
+        getOffset(): BP_Pos {
+            if(this._config.size.width === -1 && this._config.size.height === -1)
+                this.calculateSize();
+
+            return this._config.offset;
         }
 
         getNodeByName(name: string): Node|void{
