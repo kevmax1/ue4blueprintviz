@@ -201,13 +201,13 @@ module UE4Lib{
         offset: BP_Pos = {
             x: 0,
             y: 0
-        }
+        };
 
         //size of the blueprint
         size: BP_Size = {
             width: 0,
             height: 0
-        }
+        };
 
         //safe area to add, so the outer node don't stick right to the edge
         //padding.width = 32 => padding left = 16; padding right = 16
@@ -215,7 +215,7 @@ module UE4Lib{
         padding: BP_Size = {
             width: 0,
             height: 0
-        }
+        };
     }
 
     export class Blueprint implements IBlueprint{
@@ -279,7 +279,23 @@ module UE4Lib{
             if(this._config.size.width === -1 && this._config.size.height === -1)
                 this.calculateSize();
 
-            return this._config.offset;
+            var padding: BP_Size = this.getPadding();
+
+            return {
+                x: this._config.offset.x + Math.floor(padding.width/2),
+                y: this._config.offset.y + Math.floor(padding.height/2)
+            };
+        }
+
+        setPadding(width: number, height: number): void {
+            this._config.padding = {
+                width: Math.abs(width),
+                height: Math.abs(height)
+            };
+        }
+
+        getPadding(): BP_Size {
+            return this._config.padding;
         }
 
         getNodeByName(name: string): Node|void{
