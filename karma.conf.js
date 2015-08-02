@@ -17,7 +17,12 @@ module.exports = function (config) {
         files: [
             'test/*.js',
             'dest/ue4lib.js',
-            'test/bp4.txt'
+            'test/bp4.txt',
+            'test/blueprints/size_comment1.txt',
+            'test/blueprints/size_comment2.txt',
+            'test/blueprints/size_comment3.txt',
+            'test/blueprints/size_comment4.txt',
+            'test/blueprints/node_size1.txt'
         ],
 
 
@@ -28,7 +33,12 @@ module.exports = function (config) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            'test/bp4.txt': ['html2js']
+            'test/bp4.txt': ['html2js'],
+            'test/blueprints/size_comment1.txt': ['html2js'],
+            'test/blueprints/size_comment2.txt': ['html2js'],
+            'test/blueprints/size_comment3.txt': ['html2js'],
+            'test/blueprints/size_comment4.txt': ['html2js'],
+            'test/blueprints/node_size1.txt': ['html2js']
         },
 
 

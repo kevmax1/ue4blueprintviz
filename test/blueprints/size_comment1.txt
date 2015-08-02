@@ -1,0 +1,6 @@
+Begin Object Class=EdGraphNode_Comment Name="EdGraphNode_Comment_26"
+   NodeWidth=256
+   NodeHeight=128
+   NodeComment="Comment"
+   NodeGuid=D2C651594C089B67520BAE963DD8F702
+End Object
