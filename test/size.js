@@ -1,31 +1,154 @@
-describe("Blueprint Size Calculation:", function() {
-    it("singe comment at origin", function() {
-        var blueprint = UE4Lib.parseBlueprint(window.__html__['test/bp4.txt']);
+describe('Blueprint Size Calculation: Single Comment At Origin', function(){
+    'uset strict';
 
-        expect(blueprint._data.length).toEqual(1);
+    var blueprint;
+    var size;
+    var offset;
+
+    beforeEach(function(){
+        blueprint = UE4Lib.parseBlueprint(window.__html__['test/blueprints/size_comment1.txt']);
+        size = blueprint.getSize();
+        offset = blueprint.getOffset();
     });
 
-    it("single comment negative origin", function() {
-        var blueprint = UE4Lib.parseBlueprint(window.__html__['test/bp4.txt']);
-
-        expect(blueprint._data.length).toEqual(1);
+    it('width', function(){
+        expect(size.width).toEqual(256);
     });
 
-    it("singe comment positive origin", function() {
-        var blueprint = UE4Lib.parseBlueprint(window.__html__['test/bp4.txt']);
-
-        expect(blueprint._data.length).toEqual(1);
+    it('height', function(){
+        expect(size.width).toEqual(128);
     });
 
-    it("2 comments", function() {
-        var blueprint = UE4Lib.parseBlueprint(window.__html__['test/bp4.txt']);
-
-        expect(blueprint._data.length).toEqual(1);
+    it('offset x', function(){
+        expect(size.width).toEqual(0);
     });
 
-    it("1 negativ comment 1 positive node", function() {
-        var blueprint = UE4Lib.parseBlueprint(window.__html__['test/bp4.txt']);
-
-        expect(blueprint._data.length).toEqual(1);
+    it('offset y', function(){
+        expect(size.width).toEqual(0);
     });
+
+});
+
+describe('Blueprint Size Calculation: Single Comment Negative Offset', function(){
+    'uset strict';
+
+    var blueprint;
+    var size;
+    var offset;
+
+    beforeEach(function(){
+        blueprint = UE4Lib.parseBlueprint(window.__html__['test/blueprints/size_comment2.txt']);
+        size = blueprint.getSize();
+        offset = blueprint.getOffset();
+    });
+
+    it('width', function(){
+        expect(size.width).toEqual(256);
+    });
+
+    it('height', function(){
+        expect(size.width).toEqual(128);
+    });
+
+    it('offset x', function(){
+        expect(size.width).toEqual(-256);
+    });
+
+    it('offset y', function(){
+        expect(size.width).toEqual(128);
+    });
+
+});
+
+describe('Blueprint Size Calculation: Single Comment Positive Offset', function(){
+    'uset strict';
+
+    var blueprint;
+    var size;
+    var offset;
+
+    beforeEach(function(){
+        blueprint = UE4Lib.parseBlueprint(window.__html__['test/blueprints/size_comment3.txt']);
+        size = blueprint.getSize();
+        offset = blueprint.getOffset();
+    });
+
+    it('width', function(){
+        expect(size.width).toEqual(256);
+    });
+
+    it('height', function(){
+        expect(size.width).toEqual(128);
+    });
+
+    it('offset x', function(){
+        expect(size.width).toEqual(128);
+    });
+
+    it('offset y', function(){
+        expect(size.width).toEqual(128);
+    });
+
+});
+
+describe('2 Comments', function(){
+    'uset strict';
+
+    var blueprint;
+    var size;
+    var offset;
+
+    beforeEach(function(){
+        blueprint = UE4Lib.parseBlueprint(window.__html__['test/blueprints/size_comment4.txt']);
+        size = blueprint.getSize();
+        offset = blueprint.getOffset();
+    });
+
+    it('width', function(){
+        expect(size.width).toEqual(512 + 128 + 256);
+    });
+
+    it('height', function(){
+        expect(size.width).toEqual(256 + 128);
+    });
+
+    it('offset x', function(){
+        expect(size.width).toEqual(-512);
+    });
+
+    it('offset y', function(){
+        expect(size.width).toEqual(-256);
+    });
+
+});
+
+describe('Blueprint Size Calculation: 1 Negative Comment - 1 Node', function(){
+    'uset strict';
+
+    var blueprint;
+    var size;
+    var offset;
+
+    beforeEach(function(){
+        blueprint = UE4Lib.parseBlueprint(window.__html__['test/blueprints/node_size1.txt']);
+        size = blueprint.getSize();
+        offset = blueprint.getOffset();
+    });
+
+    it('width', function(){
+        expect(size.width).toEqual(640 + 256);
+    });
+
+    it('height', function(){
+        expect(size.width).toEqual(512);
+    });
+
+    it('offset x', function(){
+        expect(size.width).toEqual(-640);
+    });
+
+    it('offset y', function(){
+        expect(size.width).toEqual(-256);
+    });
+
 });
