@@ -55,7 +55,7 @@ describe('Blueprint Size Calculation: Single Comment Negative Offset', function(
     });
 
     it('offset y', function(){
-        expect(offset.y).toEqual(128);
+        expect(offset.y).toEqual(-128);
     });
 
 });
@@ -109,7 +109,7 @@ describe('2 Comments', function(){
     });
 
     it('height', function(){
-        expect(size.height).toEqual(256 + 128);
+        expect(size.height).toEqual(512);
     });
 
     it('offset x', function(){
