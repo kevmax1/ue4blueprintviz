@@ -238,40 +238,6 @@ module UE4Lib{
             console.groupEnd();
         }
 
-        calculateSize2(): BP_Size {
-            var min_X: number = 0;
-            var min_Y: number = 0;
-            var max_X: number = 0;
-            var max_Y: number = 0;
-
-            this._data.forEach((node: Node) => {
-                var pos: BP_Pos = node.getPosition();
-                var size: BP_Size = node.getSize();
-
-                if(pos.x < min_X){
-                    min_X = pos.x;
-                }
-                else if(pos.x + size.width > max_X){
-                    max_X = pos.x + size.width;
-                }
-
-                if(pos.y < min_Y){
-                    min_Y = pos.y;
-                }
-                else if(pos.y + size.height > max_Y){
-                    max_Y = pos.y + size.height;
-                }
-            });
-
-            this._config.offset.x = min_X;
-            this._config.offset.y = min_Y;
-
-            return {
-                width: Math.sqrt(Math.pow(min_X - max_X, 2)) + this._config.padding.width,
-                height: Math.sqrt(Math.pow(min_Y - max_Y, 2)) + this._config.padding.height
-            }
-        }
-
         calculateSize(): BP_Size {
             var size = this._data[0].getSize();
             var position = this._data[0].getPosition();
