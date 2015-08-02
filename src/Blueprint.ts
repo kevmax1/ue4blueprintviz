@@ -39,8 +39,8 @@ module UE4Lib{
 
         getPosition(): BP_Pos{
             return {
-                x: this.getProperty('NodePosX'),
-                y: this.getProperty('NodePosY')
+                x: this.getProperty('NodePosX') || 0,
+                y: this.getProperty('NodePosY') || 0
             }
         }
 
@@ -230,11 +230,15 @@ module UE4Lib{
             });
 
             this._config.size = this.calculateSize();
+            console.group('size')
             console.dir(this._config.size);
+            console.groupEnd();
+            console.group('offset');
             console.dir(this._config.offset);
+            console.groupEnd();
         }
 
-        calculateSize(): BP_Size {
+        calculateSize2(): BP_Size {
             var min_X: number = 0;
             var min_Y: number = 0;
             var max_X: number = 0;
@@ -258,6 +262,45 @@ module UE4Lib{
                     max_Y = pos.y + size.height;
                 }
             });
+
+            this._config.offset.x = min_X;
+            this._config.offset.y = min_Y;
+
+            return {
+                width: Math.sqrt(Math.pow(min_X - max_X, 2)) + this._config.padding.width,
+                height: Math.sqrt(Math.pow(min_Y - max_Y, 2)) + this._config.padding.height
+            }
+        }
+
+        calculateSize(): BP_Size {
+            var size = this._data[0].getSize();
+            var position = this._data[0].getPosition();
+
+            var min_X: number = position.x;
+            var min_Y: number = position.y;
+            var max_X: number = position.x + size.width;
+            var max_Y: number = position.y + size.height;
+
+            this._data.forEach((node: Node) => {
+                var pos: BP_Pos = node.getPosition();
+                var size: BP_Size = node.getSize();
+
+                if(pos.x < min_X){
+                    min_X = pos.x;
+                }
+                if(pos.x + size.width > max_X){
+                    max_X = pos.x + size.width;
+                }
+
+                if(pos.y < min_Y){
+                    min_Y = pos.y;
+                }
+                if(pos.y + size.height > max_Y){
+                    max_Y = pos.y + size.height;
+                }
+            });
+
+            debugger
 
             this._config.offset.x = min_X;
             this._config.offset.y = min_Y;
