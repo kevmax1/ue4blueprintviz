@@ -134,15 +134,18 @@ module UE4Lib{
 
     export function drawNodes(container: HTMLElement, blueprint: Blueprint): void {
         var nodes = blueprint.getNodes();
+        var offset = blueprint.getOffset();
 
         nodes.forEach(function(node: Node){
             if(node.getClass() === 'EdGraphNode_Comment'){
-                createEdGraphNode_Comment(container, node);
+                let nodeEl: HTMLElement = createEdGraphNode_Comment(container, node);
+                nodeEl.style.transform = 'translate(' + (Math.abs(offset.x)) + 'px,' + (Math.abs(offset.y)) + 'px)';
+                container.getElementsByClassName('nodes')[0].appendChild(nodeEl);
             }
         });
     }
 
-    export function createEdGraphNode_Comment(container: HTMLElement, node: Node): void {
+    export function createEdGraphNode_Comment(container: HTMLElement, node: Node): HTMLElement {
         var size = node.getSize();
         var position = node.getPosition();
         var div = document.createElement('div');
@@ -153,9 +156,8 @@ module UE4Lib{
         div.style.left = position.x + 'px';
         div.style.top = position.y + 'px';
         div.style.backgroundColor = node.getCommentColorAsCSS();
-        div.style.transform = 'translate(' + 512 + 'px,' + 256 + 'px)'; //todo add dynamic offset
 
-        container.getElementsByClassName('nodes')[0].appendChild(div);
+        return div;
     }
 
     export function initContainer(container: HTMLElement) {
