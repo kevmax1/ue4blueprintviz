@@ -266,10 +266,9 @@ module UE4Lib{
                 }
             });
 
-            debugger
-
-            this._config.offset.x = min_X;
-            this._config.offset.y = min_Y;
+            //round offset to be power of 128(full grid)
+            this._config.offset.x = (min_X % 128 !== 0) ? this._config.offset.x = Math.ceil(min_X / 128) * 128 : min_X;
+            this._config.offset.y = (min_Y % 128 !== 0) ? this._config.offset.y = Math.ceil(min_Y / 128) * 128 : min_Y;
 
             return {
                 width: Math.sqrt(Math.pow(min_X - max_X, 2)) + this._config.padding.width,
