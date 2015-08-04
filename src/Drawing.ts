@@ -140,7 +140,7 @@ module UE4Lib{
         container.innerHTML = '';
         container.className = 'blueprint-view';
 
-        brandingEl.innerHTML = 'BLUEPRINT 2';
+        brandingEl.innerHTML = 'BLUEPRINT';
         brandingEl.className = 'branding';
         container.appendChild(brandingEl);
 
