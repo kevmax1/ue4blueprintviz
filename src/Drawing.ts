@@ -36,6 +36,7 @@ module UE4Lib{
 
     export function drawGrid(container: HTMLElement, blueprint: Blueprint): void {
         var size = blueprint.getSize();
+        var offset = blueprint.getOffset();
         console.log(blueprint.getSize());
 
         var canvas: HTMLCanvasElement = <HTMLCanvasElement>container.getElementsByClassName('grid')[0];
@@ -104,7 +105,31 @@ module UE4Lib{
             }
         }
 
-        //todo draw axis if present
+        //draw x axis
+        if(offset.y <=0 && offset.y + size.height >= 0){
+            console.warn('drawing x axis');
+            drawGridLine({
+                ctx: ctx,
+                color: GridColor.axis,
+                fromX: 0,
+                fromY: (offset.y * -1),
+                toX: canvas.width,
+                toY: (offset.y * -1)
+            });
+        }
+
+        //draw y axis
+        if(offset.x <= 0 && offset.x + size.width >= 0){
+            console.warn('drawing y axis');
+            drawGridLine({
+                ctx: ctx,
+                color: GridColor.axis,
+                fromX: (offset.x * -1),
+                fromY: 0,
+                toX: (offset.x * -1),
+                toY: canvas.height
+            });
+        }
     }
 
     export function drawNodes(container: HTMLElement, blueprint: Blueprint): void {
@@ -128,6 +153,7 @@ module UE4Lib{
         div.style.left = position.x + 'px';
         div.style.top = position.y + 'px';
         div.style.backgroundColor = node.getCommentColorAsCSS();
+        div.style.transform = 'translate(' + 512 + 'px,' + 256 + 'px)'; //todo add dynamic offset
 
         container.getElementsByClassName('nodes')[0].appendChild(div);
     }
@@ -141,10 +167,6 @@ module UE4Lib{
         container.innerHTML = '';
         container.className = 'blueprint-view';
 
-        brandingEl.innerHTML = BRANDING_TEXT;
-        brandingEl.className = 'branding';
-        container.appendChild(brandingEl);
-
         gridEl.className = 'grid';
         container.appendChild(gridEl);
 
@@ -153,5 +175,9 @@ module UE4Lib{
 
         nodesEl.className = 'nodes';
         container.appendChild(nodesEl);
+
+        brandingEl.innerHTML = BRANDING_TEXT;
+        brandingEl.className = 'branding';
+        container.appendChild(brandingEl);
     }
 }
