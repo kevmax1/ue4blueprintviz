@@ -33,11 +33,11 @@ module UE4Lib{
         ctx.stroke();
     }
 
-    export function drawGrid(blueprint: Blueprint): void {
+    export function drawGrid(container: HTMLElement, blueprint: Blueprint): void {
         var size = blueprint.getSize();
         console.log(blueprint.getSize());
 
-        var canvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById('background');
+        var canvas: HTMLCanvasElement = <HTMLCanvasElement>container.getElementsByClassName('grid')[0];
         var ctx = canvas.getContext('2d');
 
         canvas.width = size.width;
@@ -106,17 +106,17 @@ module UE4Lib{
         //todo draw axis if present
     }
 
-    export function drawNodes(blueprint: Blueprint): void {
+    export function drawNodes(container: HTMLElement, blueprint: Blueprint): void {
         var nodes = blueprint.getNodes();
 
         nodes.forEach(function(node: Node){
             if(node.getClass() === 'EdGraphNode_Comment'){
-                createEdGraphNode_Comment(node);
+                createEdGraphNode_Comment(container, node);
             }
         });
     }
 
-    export function createEdGraphNode_Comment(node: Node): void {
+    export function createEdGraphNode_Comment(container: HTMLElement, node: Node): void {
         var size = node.getSize();
         var position = node.getPosition();
         var div = document.createElement('div');
@@ -128,6 +128,29 @@ module UE4Lib{
         div.style.top = position.y + 'px';
         div.style.backgroundColor = node.getCommentColorAsCSS();
 
-        document.getElementById('nodes').appendChild(div);
+        container.getElementsByClassName('nodes')[0].appendChild(div);
+    }
+
+    export function initContainer(container: HTMLElement) {
+        var brandingEl: HTMLElement = document.createElement('div');
+        var gridEl: HTMLCanvasElement = document.createElement('canvas');
+        var linesEl: SVGElement = <SVGElement>document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        var nodesEl: HTMLElement = document.createElement('div');
+
+        container.innerHTML = '';
+        container.className = 'blueprint-view';
+
+        brandingEl.innerHTML = 'BLUEPRINT 2';
+        brandingEl.className = 'branding';
+        container.appendChild(brandingEl);
+
+        gridEl.className = 'grid';
+        container.appendChild(gridEl);
+
+        linesEl.setAttribute('class', 'lines');
+        container.appendChild(linesEl);
+
+        nodesEl.className = 'nodes';
+        container.appendChild(nodesEl);
     }
 }

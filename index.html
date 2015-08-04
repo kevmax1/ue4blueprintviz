@@ -10,12 +10,12 @@
             margin: 0;
         }
 
-        #bp, #paste{
+        #bp, #paste, .blueprint-view{
             height: 900px;
             float: left;
         }
 
-        #bp{
+        #bp, .blueprint-view{
             position: relative;
             width: 60%;
             background-color: #2A2A2A;
@@ -48,7 +48,7 @@
             font-weight: bold;
         }
 
-        #branding{
+        #branding, .blueprint-view .branding{
             position: absolute;
             right: 30px;
             bottom: 0px;
@@ -57,7 +57,12 @@
             font-weight: bold;
         }
 
-        #background, #lines, #nodes{
+        #background,
+        #lines,
+        #nodes,
+        .blueprint-view .grid,
+        .blueprint-view .lines,
+        .blueprint-view .nodes{
             /*width: 100%;
             height: 100%;*/
             position: absolute;
@@ -73,11 +78,11 @@
 </head>
 <body>
 <div id="main">
-    <div id="bp">
-        <div id="branding">BLUEPRINT</div>
-        <canvas id="background"></canvas>
-        <svg id="lines"></svg>
-        <div id="nodes"></div>
+    <div class="blueprint-view">
+        <div class="branding">BLUEPRINT</div>
+        <canvas class="background"></canvas>
+        <svg class="lines"></svg>
+        <div class="nodes"></div>
     </div>
     <div id="paste">
         <span id="paste-branding">PASTE BLUEPRINT</span>
@@ -92,15 +97,16 @@
         pastefield.addEventListener('paste', function(e){
             var pasted = e.clipboardData.getData('text/plain');
             var nodes = UE4Lib.parseBlueprint(pasted);
+            var bp = document.getElementsByClassName('blueprint-view')[0];
 
             //UE4Lib.drawBlueprint(nodes);
             console.dir(nodes);
-            UE4Lib.drawGrid(nodes);
-            UE4Lib.drawNodes(nodes);
+            UE4Lib.initContainer(bp);
+            UE4Lib.drawGrid(bp, nodes);
+            UE4Lib.drawNodes(bp, nodes);
         });
 
-        var bpEl = document.getElementById('bp');
-        var nodeEl = document.getElementById('nodes');
+        var bpEl = document.getElementsByClassName('blueprint-view')[0];
 
         var mouseDown = false;
         var scrollX, scrollY;
