@@ -6,7 +6,7 @@ module UE4Lib{
     //SetColorAndOpacity
 
     var gridSize = 16;
-    const BRANDING_TEXT = 'BLUEPRINT';
+    const BRANDING_TEXT = 'BLUEPRINT VIEWER';
 
     export class GridColor {
         static background: string = '#2A2A2A';
