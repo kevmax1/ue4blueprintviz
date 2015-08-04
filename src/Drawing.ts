@@ -6,6 +6,7 @@ module UE4Lib{
     //SetColorAndOpacity
 
     var gridSize = 16;
+    const BRANDING_TEXT = 'BLUEPRINT';
 
     export class GridColor {
         static background: string = '#2A2A2A';
@@ -140,7 +141,7 @@ module UE4Lib{
         container.innerHTML = '';
         container.className = 'blueprint-view';
 
-        brandingEl.innerHTML = 'BLUEPRINT';
+        brandingEl.innerHTML = BRANDING_TEXT;
         brandingEl.className = 'branding';
         container.appendChild(brandingEl);
 
