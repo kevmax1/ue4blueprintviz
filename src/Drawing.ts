@@ -139,7 +139,7 @@ module UE4Lib{
         nodes.forEach(function(node: Node){
             if(node.getClass() === 'EdGraphNode_Comment'){
                 let nodeEl: HTMLElement = createEdGraphNode_Comment(container, node);
-                nodeEl.style.transform = 'translate(' + (Math.abs(offset.x)) + 'px,' + (Math.abs(offset.y)) + 'px)';
+                nodeEl.style.transform = 'translate(' + (offset.x * -1) + 'px,' + (offset.y * -1) + 'px)';
                 container.getElementsByClassName('nodes')[0].appendChild(nodeEl);
             }
         });
@@ -152,7 +152,7 @@ module UE4Lib{
 
         div.style.width = size.width + 'px';
         div.style.height = size.height + 'px';
-        div.style.position = 'relative';
+        div.style.position = 'absolute';
         div.style.left = position.x + 'px';
         div.style.top = position.y + 'px';
         div.style.backgroundColor = node.getCommentColorAsCSS();
