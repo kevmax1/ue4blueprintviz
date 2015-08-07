@@ -209,12 +209,11 @@ module UE4Lib{
             height: 0
         };
 
-        //safe area to add, so the outer node don't stick right to the edge
-        //padding.width = 32 => padding left = 16; padding right = 16
-        //padding.height = 32 => padding top = 16; padding bottom = 16
+        //safe area to add, so the outer nodes don't stick right to the edge
+        //padding widt = 256 -> padding of 128 on left & right side = 1 grid padding on each side
         padding: BP_Size = {
-            width: 0,
-            height: 0
+            width: 256,
+            height: 256
         };
     }
 
@@ -270,6 +269,10 @@ module UE4Lib{
             this._config.offset.x = (min_X % 128 !== 0) ? this._config.offset.x = Math.ceil(min_X / 128) * 128 : min_X;
             this._config.offset.y = (min_Y % 128 !== 0) ? this._config.offset.y = Math.ceil(min_Y / 128) * 128 : min_Y;
 
+            //add padding offset
+            this._config.offset.x -= Math.floor(this._config.padding.width/2);
+            this._config.offset.y -= Math.floor(this._config.padding.height/2);
+
             return {
                 width: Math.sqrt(Math.pow(min_X - max_X, 2)) + this._config.padding.width,
                 height: Math.sqrt(Math.pow(min_Y - max_Y, 2)) + this._config.padding.height
@@ -287,12 +290,7 @@ module UE4Lib{
             if(this._config.size.width === -1 && this._config.size.height === -1)
                 this.calculateSize();
 
-            var padding: BP_Size = this.getPadding();
-
-            return {
-                x: this._config.offset.x + Math.floor(padding.width/2),
-                y: this._config.offset.y + Math.floor(padding.height/2)
-            };
+            return this._config.offset;
         }
 
         setPadding(width: number, height: number): void {
