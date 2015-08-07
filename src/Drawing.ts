@@ -49,7 +49,7 @@ module UE4Lib{
 
         ctx.globalCompositeOperation = 'normal';
         ctx.fillStyle = GridColor.background;
-        ctx.fillRect(10, 10, 100, 100);
+        ctx.translate(0.5,0.5); //for dat extra crisp grid
 
         //draw small grid
         for(var i=1; i<canvas.width; i++){
@@ -130,6 +130,14 @@ module UE4Lib{
                 toY: canvas.height
             });
         }
+
+        ctx.translate(-0.5,-0.5); //for dat extra crisp grid
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "#039EE5";
+        ctx.beginPath();
+        ctx.moveTo(42, 115);
+        ctx.bezierCurveTo(221, 114, 231, 251, 400, 250);
+        ctx.stroke();
     }
 
     export function drawNodes(container: HTMLElement, blueprint: Blueprint): void {
@@ -142,6 +150,11 @@ module UE4Lib{
                 nodeEl.style.transform = 'translate(' + (offset.x * -1) + 'px,' + (offset.y * -1) + 'px)';
                 container.getElementsByClassName('nodes')[0].appendChild(nodeEl);
             }
+            else{
+                let nodeEl: HTMLElement = createPlaceholderNode(container, node);
+                nodeEl.style.transform = 'translate(' + (offset.x * -1) + 'px,' + (offset.y * -1) + 'px)';
+                container.getElementsByClassName('nodes')[0].appendChild(nodeEl);
+            }
         });
     }
 
@@ -150,12 +163,34 @@ module UE4Lib{
         var position = node.getPosition();
         var div = document.createElement('div');
 
+        div.className = node.getClass();
         div.style.width = size.width + 'px';
         div.style.height = size.height + 'px';
         div.style.position = 'absolute';
         div.style.left = position.x + 'px';
         div.style.top = position.y + 'px';
         div.style.backgroundColor = node.getCommentColorAsCSS();
+
+        return div;
+    }
+
+    export function createPlaceholderNode(container: HTMLElement, node: Node): HTMLElement {
+        var position = node.getPosition();
+        var div = document.createElement('div');
+
+        div.innerHTML = node.getClass();
+        div.style.textAlign = 'center';
+        div.style.lineHeight = '128px';
+        div.className = node.getClass();
+        div.style.width = '256px';
+        div.style.height = '128px';
+        div.style.position = 'absolute';
+        div.style.left = position.x + 'px';
+        div.style.top = position.y + 'px';
+        div.style.backgroundColor = '#4B6248';
+        div.style.zIndex = '1';
+        div.style.borderRadius = '16px';
+        div.style.color = 'white';
 
         return div;
     }
