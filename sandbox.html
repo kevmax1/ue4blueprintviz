@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sandbox - Visual Playground for new nodes</title>
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,700,900,500,100' rel='stylesheet' type='text/css'>
+    <style>
+        body{
+            padding: 0;
+            margin: 0;
+            background-color: #2A2A2A;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .footer{
+            position: absolute;
+            right: 0px;
+            bottom: 0px;
+            color: #4D4D4D;
+            font-size: 48px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+    <canvas class="grid"></canvas>
+    <div class="nodes"></div>
+    <div class="footer">blueprint node sandbox</div>
+
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function(event) {
+            drawGrid();
+        });
+
+        window.addEventListener('resize', function(event){
+           drawGrid();
+        });
+
+
+        function drawGrid() {
+            'use strict';
+
+            var canvas = document.getElementsByClassName('grid')[0];
+            var ctx = canvas.getContext('2d');
+            var size = {
+                height: window.innerHeight,
+                width: window.innerWidth
+            };
+            var offset = {
+                x: 0,
+                y: 0
+            };
+            var gridSize = 16;
+            var GridColor = {
+                background: '#2A2A2A',
+                primaryLine: '#353535',
+                secondaryLine: '#1C1C1C',
+                axis: '#000000'
+            };
+
+            canvas.width = size.width;
+            canvas.height = size.height;
+            canvas.style.width = size.width + 'px';
+            canvas.style.height = size.height + 'px';
+
+            function drawGridLine(params) {
+                var ctx = params.ctx;
+
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(params.fromX, params.fromY);
+                ctx.lineTo(params.toX, params.toY);
+                ctx.strokeStyle = params.color;
+                ctx.stroke();
+            }
+
+            ctx.globalCompositeOperation = 'normal';
+            ctx.fillStyle = GridColor.background;
+            ctx.translate(0.5,0.5); //for dat extra crisp grid
+
+            //draw small grid
+            for(var i=1; i<canvas.width; i++){
+                if(i % gridSize === 0){
+                    drawGridLine({
+                        ctx: ctx,
+                        color: GridColor.primaryLine,
+                        fromX: i,
+                        fromY: 0,
+                        toX: i,
+                        toY: canvas.height
+                    });
+                }
+            }
+
+            for(var i=1; i<canvas.height; i++){
+                if(i % gridSize === 0){
+                    drawGridLine({
+                        ctx: ctx,
+                        color: GridColor.primaryLine,
+                        fromX: 0,
+                        fromY: i,
+                        toX: canvas.width,
+                        toY: i
+                    });
+                }
+            }
+
+            //draw big grid
+            for(var i=1; i<canvas.width; i++){
+                if(i % (gridSize * 8) === 0){
+                    drawGridLine({
+                        ctx: ctx,
+                        color: GridColor.secondaryLine,
+                        fromX: i,
+                        fromY: 0,
+                        toX: i,
+                        toY: canvas.height
+                    });
+                }
+            }
+
+            for(var i=1; i<canvas.height; i++){
+                if(i % (gridSize * 8) === 0){
+                    drawGridLine({
+                        ctx: ctx,
+                        color: GridColor.secondaryLine,
+                        fromX: 0,
+                        fromY: i,
+                        toX: canvas.width,
+                        toY: i
+                    });
+                }
+            }
+
+            //draw x axis
+            if(offset.y <=0 && offset.y + size.height >= 0){
+                drawGridLine({
+                    ctx: ctx,
+                    color: GridColor.axis,
+                    fromX: 0,
+                    fromY: (offset.y * -1),
+                    toX: canvas.width,
+                    toY: (offset.y * -1)
+                });
+            }
+
+            //draw y axis
+            if(offset.x <= 0 && offset.x + size.width >= 0){
+                drawGridLine({
+                    ctx: ctx,
+                    color: GridColor.axis,
+                    fromX: (offset.x * -1),
+                    fromY: 0,
+                    toX: (offset.x * -1),
+                    toY: canvas.height
+                });
+            }
+        }
+    </script>
+</body>
+</html>
