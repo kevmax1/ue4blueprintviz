@@ -1,0 +1,15 @@
+{
+  "name": "ue4blueprintjs",
+  "version": "0.0.0",
+  "homepage": "https://github.com/tmkn/ue4blueprintviz",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.0.0"
+  }
+}

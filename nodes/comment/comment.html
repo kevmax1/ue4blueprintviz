@@ -1,0 +1,25 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="node-comment">
+    <template>
+        <p>I'm a DOM element. This is my local DOM!</p>
+    </template>
+
+    <style>
+        p{
+            position: absolute;
+            top: 0px;
+        }
+    </style>
+
+    <script>
+        // register a new element called proto-element
+        Polymer({
+            is: "node-comment",
+            // add a callback to the element's prototype
+            ready: function() {
+                //this.textContent = "I'm a proto-element. Check out my prototype!"
+            }
+        });
+    </script>
+</dom-module>

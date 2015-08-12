@@ -51,3 +51,4 @@ src/**/*.js
 src/**/*.js.map
 node_modules
 dest
+bower_components

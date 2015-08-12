@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <title>Sandbox - Visual Playground for new nodes</title>
     <link href='http://fonts.googleapis.com/css?family=Roboto:400,700,900,500,100' rel='stylesheet' type='text/css'>
+    <script src="bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
+
+    <link rel="import" href="nodes/comment/comment.html">
+
     <style>
         body{
             padding: 0;
@@ -47,12 +51,13 @@
 </head>
 <body>
     <canvas class="grid"></canvas>
+    <node-comment></node-comment>
     <div class="nodes">
         <div class="comment">
             <header>DEBUG - Print Time Normalized</header>
         </div>
     </div>
-    <div class="footer">blueprint node sandbox</div>
+    <div class="footer">node sandbox</div>
 
     <script type="text/javascript">
         document.addEventListener("DOMContentLoaded", function(event) {
