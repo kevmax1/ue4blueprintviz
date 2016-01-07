@@ -1,0 +1,62 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+
+<dom-module id="pin-array">
+
+    <template>
+        <style>
+            .pin{
+                float: left;
+                width: 12px;
+                height: 12px;
+            }
+
+            .pin .box{
+                float: left;
+                width: 3px;
+                height: 3px;
+                background-color: #1E87D2;
+                box-sizing: border-box;
+                margin-left: 1px;
+                margin-bottom: 1px;
+            }
+
+            .pin .box.center{
+                margin-left: 5px;
+            }
+        </style>
+
+        <div class="pin">
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box center"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+        </div>
+    </template>
+
+    <script>
+        // element registration
+        PinArray = Polymer({
+            is: "pin-array",
+            factoryImpl: function(color){
+                this.color = color;
+            },
+            ready: function(){
+                var boxes = this.getElementsByClassName("box");
+                for(var i=0; i<boxes.length; i++){
+                    boxes[i].style.backgroundColor = this.color;
+                }
+            },
+            properties: {
+                color: {
+                    type: String,
+                    value: "rgb(255, 155, 100)"
+                }
+            }
+        });
+    </script>
+
+</dom-module>
