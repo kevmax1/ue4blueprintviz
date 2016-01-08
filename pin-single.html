@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <style>
+        body{
+            background-color: black;
+        }
+
+        .pin{
+            position: relative;
+        }
+
+        .pin .background{
+            background-color: #00ff01;
+            width: 12px;
+            height: 12px;
+            float: left;
+            position: absolute;
+            box-sizing: border-box;
+            border-radius: 50%;
+            box-shadow: 1px 0px 2px black;
+        }
+
+        .pin .noconnection{
+            background-color: #000000;
+            width: 8px;
+            height: 8px;
+            float: left;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            box-sizing: border-box;
+            border-radius: 50%;
+        }
+
+        .pin .arrow{
+            float: left;
+            box-sizing: border-box;
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background-color: #00ff01;
+            left: 8px;
+            top: 3px;
+            transform: rotateZ(45deg);
+        }
+    </style>
+
+</head>
+<body>
+<div class="pin">
+    <div class="arrow"></div>
+    <div class="background"></div>
+    <div class="noconnection"></div>
+</div>
+</body>
+</html>
