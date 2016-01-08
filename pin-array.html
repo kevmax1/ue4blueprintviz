@@ -30,7 +30,13 @@
             <div class="box"></div>
             <div class="box"></div>
             <div class="box"></div>
-            <div class="box center"></div>
+            <template is="dom-if" if="{{!connected}}">
+                <div class="box center"></div>
+            </template>
+            <template is="dom-if" if="{{connected}}">
+                <div class="box"></div>
+                <div class="box"></div>
+            </template>
             <div class="box"></div>
             <div class="box"></div>
             <div class="box"></div>
@@ -45,16 +51,41 @@
                 this.color = color;
             },
             ready: function(){
+
+            },
+            attached: function(){
+                this.async(function(){
+                    this._setColor();
+                });
+            },
+            _setColor: function(){
                 var boxes = this.getElementsByClassName("box");
+
                 for(var i=0; i<boxes.length; i++){
                     boxes[i].style.backgroundColor = this.color;
                 }
             },
             properties: {
+                connected: {
+                    type: Boolean,
+                    value: false,
+                    observer: '_connectedChanged'
+                },
                 color: {
                     type: String,
-                    value: "rgb(255, 155, 100)"
+                    value: "rgb(0, 155, 100)",
+                    observer: '_colorChanged'
                 }
+            },
+            _connectedChanged: function(newValue, oldValue){
+                this.async(function(){
+                    this._setColor();
+                });
+            },
+            _colorChanged: function(newValue, oldValue){
+                this.async(function(){
+                    this._setColor();
+                });
             }
         });
     </script>
