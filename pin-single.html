@@ -1,60 +1,102 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+<link rel="import" href="bower_components/polymer/polymer.html">
 
-    <style>
-        body{
-            background-color: black;
-        }
+<dom-module id="pin-single">
 
-        .pin{
-            position: relative;
-        }
+    <template>
+        <style>
+            .pin{
+                position: relative;
+                float: left;
+            }
 
-        .pin .background{
-            background-color: #00ff01;
-            width: 12px;
-            height: 12px;
-            float: left;
-            position: absolute;
-            box-sizing: border-box;
-            border-radius: 50%;
-            box-shadow: 1px 0px 2px black;
-        }
+            .pin .background{
+                background-color: #00ff01;
+                width: 12px;
+                height: 12px;
+                float: left;
+                position: absolute;
+                box-sizing: border-box;
+                border-radius: 50%;
+                box-shadow: 1px 0px 2px black;
+            }
 
-        .pin .noconnection{
-            background-color: #000000;
-            width: 8px;
-            height: 8px;
-            float: left;
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            box-sizing: border-box;
-            border-radius: 50%;
-        }
+            .pin .noconnection{
+                background-color: #000000;
+                width: 8px;
+                height: 8px;
+                float: left;
+                position: absolute;
+                top: 2px;
+                left: 2px;
+                box-sizing: border-box;
+                border-radius: 50%;
+            }
 
-        .pin .arrow{
-            float: left;
-            box-sizing: border-box;
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            background-color: #00ff01;
-            left: 8px;
-            top: 3px;
-            transform: rotateZ(45deg);
-        }
-    </style>
+            .pin .arrow{
+                float: left;
+                box-sizing: border-box;
+                position: absolute;
+                width: 6px;
+                height: 6px;
+                background-color: #00ff01;
+                left: 8px;
+                top: 3px;
+                transform: rotateZ(45deg);
+            }
+        </style>
 
-</head>
-<body>
-<div class="pin">
-    <div class="arrow"></div>
-    <div class="background"></div>
-    <div class="noconnection"></div>
-</div>
-</body>
-</html>
+        <div class="pin">
+            <div class="arrow"></div>
+            <div class="background"></div>
+            <div class="noconnection"></div>
+        </div>
+    </template>
+
+    <script>
+        // element registration
+        PinSingle = Polymer({
+            is: "pin-single",
+            factoryImpl: function(color){
+                this.color = color;
+            },
+            ready: function(){
+
+            },
+            attached: function(){
+                this.async(function(){
+                    this._setColor();
+                });
+            },
+            _setColor: function(){
+                var boxes = this.getElementsByClassName("box");
+
+                for(var i=0; i<boxes.length; i++){
+                    boxes[i].style.backgroundColor = this.color;
+                }
+            },
+            properties: {
+                connected: {
+                    type: Boolean,
+                    value: false,
+                    observer: '_connectedChanged'
+                },
+                color: {
+                    type: String,
+                    value: "rgb(0, 155, 100)",
+                    observer: '_colorChanged'
+                }
+            },
+            _connectedChanged: function(newValue, oldValue){
+                this.async(function(){
+                    this._setColor();
+                });
+            },
+            _colorChanged: function(newValue, oldValue){
+                this.async(function(){
+                    this._setColor();
+                });
+            }
+        });
+    </script>
+
+</dom-module>
